@@ -1,2 +1,2 @@
 # ChatSPA
-Chat in Single Page Application
+Single Page Application Chat
