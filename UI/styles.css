@@ -1,3 +1,13 @@
+:root {
+    --grey-1: #f9f9f9;
+    --grey-2: #f1f1f1;
+    --grey-3: #e1e1e1;
+    --dark-grey: #4F5660;
+    --color-1: #3A949A;
+    --color-2: #2A7E83;
+    --online: #41CC4F
+}
+
 * {
     padding: 0;
     margin: 0;
@@ -7,8 +17,366 @@
 
 html {
     font-size: 14px;
+    font-family: 'Roboto', sans-serif;
 }
 
 .title {
     font-size: 1.12rem;
+}
+
+.container {
+    max-width: 65rem;
+    margin: 0 auto;
+
+    height: 100%;
+}
+
+.wrapper {
+    display: grid;
+    grid-template-rows: 4rem minmax(50%, auto) 4rem;
+
+    height: 100vh;
+}
+
+/* HEADER */
+
+.header {
+    background-color: var(--grey-3);
+    z-index: 1000;
+}
+
+.header-body {
+    position: relative;
+    display: grid;
+    grid-template-columns: 15rem minmax(50rem, 100%);
+
+    align-items: center;
+
+    height: 100%;
+}
+
+.header-logo {
+    justify-self: center;
+}
+
+/* ЖЕСТОКИЙ КОСТЫЛЬ ПРОСТО ЖЕСТ стоит тут потому что
+ если перенести в asie:before поменять right на 15rem
+ он будет отображаться если overflow нету :\
+
+ .aside {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+
+    background-color: var(--grey-2);
+    border-left: 1px solid var(--grey-3);
+
+    z-index: 1000;
+}
+
+.aside:before {
+    position: absolute;
+    content: '';
+    top: 4rem;
+    right: 15rem;
+
+    height: calc(100vh - 8rem);
+    width: 100vh;
+
+    background-color: var(--grey-2);
+
+    z-index: 0;
+}
+*/
+
+.header-logo:before {
+    position: absolute;
+    content: '';
+    top: 4rem;
+    right: calc(100vh - 2rem);
+
+    height: calc(100vh - 8rem);
+    width: 100vh;
+
+    background-color: var(--grey-2);
+
+    z-index: 0;
+}
+
+.logo {
+    font-family: 'Comfortaa', cursive;
+
+    font-size: 2rem;
+    font-weight: bold;
+
+    color:var(--color-2);
+
+    cursor: pointer;
+}
+
+/* MAIN */
+
+
+.main {
+
+}
+
+.main-body {
+    display: grid;
+    grid-template-columns: 15rem 50rem;
+
+    height: 100%;
+}
+
+/* MAIN-ASIDE */
+
+.aside {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+
+    background-color: var(--grey-2);
+    border-left: 1px solid var(--grey-3);
+
+    z-index: 1000;
+
+    overflow-y: scroll;
+}
+
+.status-title {
+    padding: .5rem 0;
+    margin: 0 2rem;
+
+    border-bottom: 1px solid var(--grey-3);
+}
+
+/* MAIN-ASIDE-USER STATUS */
+
+.online-user {
+    color: var(--color-1);
+    background-color: inherit;
+    
+
+    transition: .2s ease-in-out;
+
+    width: 100%;
+}
+
+.offline-user {
+    color: var(--dark-grey);
+    background-color: inherit;
+
+    transition: .2s ease-in-out;
+
+    width: 100%;
+}
+
+/* MAIN ASIDE USER */
+.user {
+    display: inline-block;
+
+    cursor: pointer;
+
+    height: 4rem;
+    width: 100%;
+}
+
+.user:hover {
+    color:#ffffff;
+    border-color: #fff;
+
+    background-color: var(--color-1);
+}
+
+.user-body {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+
+    align-items: center;
+
+    padding: .5rem 2rem;
+}
+
+.user-icon {
+    display: flex;
+
+    width: 3rem;
+    height: 3rem;
+
+    justify-content: center;
+    align-items: center;
+
+    margin-right: 1rem;
+
+    font-size: 1.2rem;
+    font-weight: bold;
+
+    border-radius: 50%;;
+}
+
+.user-icon-online {
+    position: relative;
+    border: .3rem solid var(--color-1);
+}
+
+.user-icon-online::after {
+    position: absolute;
+    content: '';
+
+    bottom: -.3rem;
+    right: -.3rem;
+
+    width: 1rem;
+    height: 1rem;
+
+    border-radius: 50%;
+    background-color: var(--online);
+    box-shadow: 0px 0px .4rem var(--online);
+}
+
+.user-icon-offline {
+    position: relative;
+    border: .3rem solid var(--grey-3);
+}
+
+.user-icon-offline::after {
+    position: absolute;
+    content: '';
+
+    bottom: -.3rem;
+    right: -.3rem;
+
+    width: 1rem;
+    height: 1rem;
+
+    border-radius: 50%;
+    background-color: var(--dark-grey);
+    box-shadow: 0px 0px .4rem var(--dark-grey);
+}
+
+/* MAIN-MAIN-SECTION */
+
+.chat-section {
+    display: grid;
+    grid-template-rows: minmax(30rem, 100%) 4rem;
+
+    border-right: 1px solid var(--grey-2);
+}
+
+.message-list {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: end;
+
+    max-height: calc(100vh - 12rem);
+    overflow-y: scroll;
+}
+
+.load-new {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    color: var(--dark-grey);
+
+    width: 100%;
+    min-height: 2rem;
+
+    margin-bottom: .5rem;
+
+    border-bottom: 1px solid var(--grey-2);
+}
+
+.message-body {
+    display: grid;
+
+    min-width: 15rem;
+    max-width: 30rem;
+
+    margin: .25rem 0 .25rem 2rem;
+}
+
+.message-body:last-child {
+    margin-top: .5rem;
+}
+
+/* MESSAGE TIPE */
+
+.personal-message {
+    padding: 1rem;
+    color: #000;
+    background-color: var(--grey-1);
+    border-radius: .5rem;
+
+    border: 1px solid var(--color-1);
+}
+
+.my-message {
+    padding: 1rem;
+    color: #000;
+    background-color: var(--grey-2);
+    border-radius: .5rem;
+}
+
+.other-message {
+    padding: 1rem;
+    color: #000;
+    background-color: var(--grey-1);
+    border-radius: .5rem;
+}
+
+/*==============*/
+.message-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.user-name {
+    color: var(--color-1);
+}
+
+.message-edit span{
+    transition: .4s ease-in-out;
+}
+
+.message-edit span:hover{
+    color: var(--color-1);
+    cursor: pointer;
+}
+
+.message {
+}
+
+.message-date {
+    color: var(--dark-grey);
+
+    font-size: .8rem;
+
+    justify-self: end;
+    padding-right: 1rem;
+}
+
+/* MESSAGE-TIPY */
+
+.message-tipy {
+    padding-left: 2rem;
+
+    display: flex;
+    align-items: center;
+
+    border-top: 1px solid var(--grey-2);
+
+    margin-top: .25rem;
+}
+
+
+
+/* FOOTER */
+
+.footer {
+    background-color: var(--dark-grey);
+
+    z-index: 1000;
 }
