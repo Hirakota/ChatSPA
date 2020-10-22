@@ -20,13 +20,17 @@ html {
     font-family: 'Roboto', sans-serif;
 }
 
+body {
+    overflow: hidden;
+}
+
 .title {
     font-size: 1.12rem;
 }
 
 .container {
-    max-width: 65rem;
-    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 65rem minmax(0, 1fr);
 
     height: 100%;
 }
@@ -59,50 +63,6 @@ html {
     justify-self: center;
 }
 
-/* ЖЕСТОКИЙ КОСТЫЛЬ ПРОСТО ЖЕСТ стоит тут потому что
- если перенести в asie:before поменять right на 15rem
- он будет отображаться если overflow нету :\
-
- .aside {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-
-    background-color: var(--grey-2);
-    border-left: 1px solid var(--grey-3);
-
-    z-index: 1000;
-}
-
-.aside:before {
-    position: absolute;
-    content: '';
-    top: 4rem;
-    right: 15rem;
-
-    height: calc(100vh - 8rem);
-    width: 100vh;
-
-    background-color: var(--grey-2);
-
-    z-index: 0;
-}
-*/
-
-.header-logo:before {
-    position: absolute;
-    content: '';
-    top: 4rem;
-    right: calc(100vh - 2rem);
-
-    height: calc(100vh - 8rem);
-    width: 100vh;
-
-    background-color: var(--grey-2);
-
-    z-index: 0;
-}
-
 .logo {
     font-family: 'Comfortaa', cursive;
 
@@ -114,20 +74,158 @@ html {
     cursor: pointer;
 }
 
-/* MAIN */
+/* SEARCH BAR */
+.search-bar {
+    display: flex;
+    align-items: center;
 
-.main {
+    padding-left: 2rem;
 
+    height: 100%;
 }
+
+.search-bar-body  {
+    display: flex;
+    flex-direction: row;
+
+    width: 30rem;
+    
+    padding: .5rem 1rem;
+
+    border-radius: .5rem;
+
+    background-color: white;
+    color: var(--dark-grey);
+}
+
+.search-icon {
+    font-size: 1.5rem;
+}
+
+.search-input {
+    border: none;
+    outline: none;
+
+    width: 20rem;
+
+    border-bottom: 1px solid var(--grey-3);
+
+    margin: 0 auto 0 1rem;
+}
+
+.search-input::placeholder {
+    color: var(--dark-grey);
+}
+
+.checkbox-list {
+    display: flex;
+    flex-direction: row;
+
+    justify-content: center;
+}
+
+.checkbox-body{
+    display:inline-block;
+    position:relative;
+    cursor:pointer;
+}
+  
+.ckeckbox-element{
+    display:block;
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    z-index:99999;
+    opacity:0;
+}
+  
+.checkbox-body>input[type='checkbox']+span{
+    transition: .3s ease-in-out;
+    color:var(--dark-grey);
+}
+
+.checkbox-body>input[type='checkbox']:hover+span{
+    transition: .3s ease-in-out;
+    color:var(--color-1);
+}
+  
+.checkbox-body>input[type='checkbox']:checked+span{
+    transition: .3s ease-in-out;
+    color:var(--color-2);
+}
+
+/* CURENT USER */
+
+.curent-user {
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    cursor: default;
+
+    color:var(--dark-grey);
+}
+
+.curent-body {
+    display: grid;
+    grid-template-columns: 3rem auto;
+    grid-column-gap: .5rem;
+
+    justify-content: center;
+
+    width: auto;
+}
+
+.curent-icon {
+    display: flex;
+
+    width: 3rem;
+    height: 3rem;
+
+    justify-content: center;
+    align-items: center;
+
+    margin-right: 1rem;
+
+    font-size: 1.2rem;
+    font-weight: bold;
+
+    color: var(--dark-grey);
+
+    border-radius: 50%;
+    border: .3rem solid var(--dark-grey);
+}
+
+.curent {
+    display: grid;
+}
+
+.curent-btn {
+    transition: .5s ease-in-out;
+    cursor: pointer;
+}
+
+.curent-btn:hover {
+    color:var(--color-1)
+}
+
+/* MAIN */
 
 .main-body {
     display: grid;
-    grid-template-columns: 15rem 50rem;
+    grid-template-columns: 15rem minmax(50%, 1fr);
 
     height: 100%;
 }
 
 /* MAIN-ASIDE */
+
+.aside-background {
+    background-color: var(--grey-2);
+}
 
 .aside {
     position: relative;
@@ -139,6 +237,7 @@ html {
 
     z-index: 1000;
 
+    max-height: calc(100vh - 8rem);
     overflow-y: scroll;
 }
 
@@ -154,7 +253,6 @@ html {
 .online-user {
     color: var(--color-1);
     background-color: inherit;
-    
 
     transition: .2s ease-in-out;
 
@@ -185,6 +283,14 @@ html {
     border-color: #fff;
 
     background-color: var(--color-1);
+}
+
+.user:hover .user-icon{
+    border-color: var(--grey-2);
+}
+
+.user:hover:not(.offline-user) .user-name {
+    color: var(--grey-2);
 }
 
 .user-body {
@@ -258,9 +364,15 @@ html {
 
 .chat-section {
     display: grid;
-    grid-template-rows: minmax(30rem, 100%) 4rem;
+    grid-template-rows: minmax(30rem, 100%) auto;
+
+    max-height: calc(100vh - 8rem);
 
     border-right: 1px solid var(--grey-2);
+}
+
+.offline-title {
+    color: var(--dark-grey) !important;
 }
 
 .message-list {
@@ -268,7 +380,7 @@ html {
     flex-direction: column-reverse;
     align-items: end;
 
-    max-height: calc(100vh - 12rem);
+    
     overflow-y: scroll;
 }
 
@@ -284,7 +396,16 @@ html {
 
     margin-bottom: .5rem;
 
+    transition: .3s ease-in-out;
     border-bottom: 1px solid var(--grey-2);
+}
+
+.load-new:hover {
+    color: var(--color-1);
+}
+
+.icon-load {
+    margin-right: .5rem;
 }
 
 .message-body {
@@ -293,7 +414,7 @@ html {
     min-width: 15rem;
     max-width: 30rem;
 
-    margin: .25rem 0 .25rem 2rem;
+    margin: .25rem 2rem;
 }
 
 .message-body:last-child {
@@ -336,6 +457,16 @@ html {
     color: var(--color-1);
 }
 
+.message-body:hover .message-edit {
+    opacity: 1;
+}
+
+.message-edit {
+    opacity: 0;
+    transition: .5s ease-in-out;
+    color: var(--dark-grey)
+}
+
 .message-edit span{
     transition: .4s ease-in-out;
 }
@@ -359,17 +490,74 @@ html {
 
 /* MESSAGE-TIPY */
 
-.message-tipy {
-    padding-left: 2rem;
-
+.typing {
     display: flex;
     align-items: center;
 
-    border-top: 1px solid var(--grey-2);
+    height: auto;
+  
+    max-height: 14rem;
 
     margin-top: .25rem;
+
+    border-top: 1px solid var(--grey-2);
 }
 
+.typing-body {
+    display: grid;
+    grid-template-columns: auto 5rem;
+
+    background-color: var(--grey-1);
+
+    margin: 1rem 2rem;
+    width: 100%;
+
+    color:var(--dark-grey);
+
+    border-radius: .5rem;
+    border: 1px solid var(--grey-3);
+}
+
+.typing-area {
+    margin: 1rem;
+
+    background-color: transparent;
+    border: none;
+} 
+
+.typing-area::placeholder {
+    color:var(--dark-grey);
+}
+
+.typing-area:focus {
+    background-color: inherit;
+    outline: none;
+}
+
+.send-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 100%;
+    width: 100%;
+
+    border: .3rem solid var(--grey-1);
+    border-radius: .5rem;
+
+    color: var(--grey-2);
+
+    transition: .3s ease-in-out;
+    background-color: var(--color-1);
+}
+
+.send-message:hover {
+    background-color: var(--color-2);
+}
+
+.icon {
+    font-size: 2rem !important;
+}
 
 
 /* FOOTER */
@@ -378,4 +566,16 @@ html {
     background-color: var(--dark-grey);
 
     z-index: 1000;
+}
+
+
+
+@media screen and (max-width: 910px) {
+    .container {
+        grid-template-columns: 100vw;
+    }
+
+    .space {
+        display: none;
+    }
 }
