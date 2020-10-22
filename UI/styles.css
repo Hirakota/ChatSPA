@@ -568,6 +568,16 @@ body {
     z-index: 1000;
 }
 
+.footer-body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    height: 100%;
+
+    color: var(--grey-3);
+}
+
 
 
 @media screen and (max-width: 910px) {
