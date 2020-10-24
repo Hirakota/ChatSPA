@@ -156,6 +156,10 @@ body {
     color:var(--color-2);
 }
 
+.checkbox-body>input[type='checkbox']:checked:hover+span{
+    color: var(--color-1);
+}
+
 /* CURENT USER */
 
 .curent-user {
