@@ -1,5 +1,5 @@
 const chat = (function () {
-    messages = [
+    let messages = [
         {
             id: "1",
             text: "added js",
