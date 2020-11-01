@@ -1,13 +1,15 @@
 let prices = [7, 1, 5, 3, 6, 4];
 console.log("Task 1 Profit = " + maxProfit(prices));
 prices = [1, 2, 3, 4, 5];
-debugger;
 console.log("Task 2 Profit = " + maxProfit(prices));
 prices = [7, 6, 4, 3, 1];
 console.log("Task 3 Profit = " + maxProfit(prices));
 
 function maxProfit(price) {
-    debugger;
+    if (price.length < 1 && price.length < 3 * 10000 + 1) return;
+
+    if (Math.min(...price) < 1 && Math.max(...price) > 10000) return;
+
     let n = price.length;
     // Создать массив прибыли и инициализировать его как 0
 
