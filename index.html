@@ -1,379 +1,463 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="UI/styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://code.iconify.design/1/1.0.6/iconify.min.js"></script>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="UI/styles.css" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+            rel="stylesheet"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Roboto:wght@400;700&display=swap"
+            rel="stylesheet"
+        />
+        <script src="https://code.iconify.design/1/1.0.6/iconify.min.js"></script>
 
-    <title>Document</title>
-</head>
-<body>
-    <div class="wrapper">
-        <header class="header">
-            <div class="container">
-                <div class="space"></div>
-                <div class="header-body">
-                    <div class="header-logo">
-                        <h1 class="logo">Just Chat</h1>
+        <title>Document</title>
+    </head>
+    <body>
+        <div class="wrapper">
+            <header class="header">
+                <div class="container">
+                    <div class="space"></div>
+                    <div class="header-body">
+                        <div class="header-logo">
+                            <h1 class="logo">Just Chat</h1>
+                        </div>
+                        <div class="search-bar">
+                            <div class="search-bar-body">
+                                <span
+                                    class="iconify search-icon"
+                                    data-inline="false"
+                                    data-icon="carbon:search"
+                                ></span>
+                                <input
+                                    class="search-input"
+                                    type="text"
+                                    placeholder="Search..."
+                                />
+
+                                <div class="checkbox-list">
+                                    <span class="checkbox-body">
+                                        <input
+                                            class="ckeckbox-element"
+                                            type="checkbox"
+                                        />
+                                        <span>
+                                            <span
+                                                class="iconify search-icon"
+                                                data-inline="false"
+                                                data-icon="carbon:email"
+                                            ></span>
+                                        </span>
+                                    </span>
+                                    <span class="checkbox-body">
+                                        <input
+                                            class="ckeckbox-element"
+                                            type="checkbox"
+                                        />
+                                        <span>
+                                            <span
+                                                class="iconify search-icon"
+                                                data-inline="false"
+                                                data-icon="carbon:user"
+                                            ></span>
+                                        </span>
+                                    </span>
+                                    <span class="checkbox-body">
+                                        <input
+                                            class="ckeckbox-element"
+                                            type="checkbox"
+                                        />
+                                        <span>
+                                            <span
+                                                class="iconify search-icon"
+                                                data-inline="false"
+                                                data-icon="carbon:calendar"
+                                            ></span>
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="search-bar">
-                        <div class="search-bar-body">
-                            <span class="iconify search-icon" data-inline="false" data-icon="carbon:search"></span>
-                            <input class="search-input" type="text" placeholder="Search...">
-
-                            <div class="checkbox-list">
-                                <span class="checkbox-body">
-                                    <input class="ckeckbox-element" type="checkbox"/>  
-                                    <span>
-                                        <span class="iconify search-icon" data-inline="false" data-icon="carbon:email"></span>
-                                    </span>
-                                </span>
-                                <span class="checkbox-body">
-                                    <input class="ckeckbox-element" type="checkbox"/>  
-                                    <span>
-                                        <span class="iconify search-icon" data-inline="false" data-icon="carbon:user"></span>
-                                    </span>
-                                </span>
-                                <span class="checkbox-body">
-                                    <input class="ckeckbox-element" type="checkbox"/>  
-                                    <span>
-                                        <span class="iconify search-icon" data-inline="false" data-icon="carbon:calendar"></span>
-                                    </span>
-                                </span>
+                    <div class="curent-user">
+                        <div class="curent-body">
+                            <div class="curent-icon title">A</div>
+                            <div class="curent">
+                                <h2 class="title">Alexandr</h2>
+                                <span class="curent-btn">Log out</span>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="curent-user">
-                    <div class="curent-body">
-                        <div class="curent-icon title">A</div>
-                        <div class="curent">
-                            <h2 class="title">Alexandr</h2>
-                            <span class="curent-btn">Log out</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>
-        <main class="main">
-            <div class="container">
-                <div class="aside-background space"></div>
-                <div class="main-body">
-                    <aside class="aside">
-                        <div class="online-user">
-                            <div class="aside-container">
-                                <h2 class="title status-title">
-                                    Online: 12
-                                </h2>
-                            </div>
-                            
-                            <div class="user">
-                                <div class="user-body">
-                                    <div class="user-icon user-icon-online">A</div>
-                                    <h2 class="user-name title">Alexandr</h2>
+            </header>
+            <main class="main">
+                <div class="container">
+                    <div class="aside-background space"></div>
+                    <div class="main-body">
+                        <aside class="aside">
+                            <div class="online-user">
+                                <div class="aside-container">
+                                    <h2 class="title status-title">
+                                        Online: 12
+                                    </h2>
                                 </div>
-                            </div>
-                            <div class="user">
-                                <div class="user-body">
-                                    <div class="user-icon user-icon-online">E</div>
-                                    <h2 class="user-name title">Ed</h2>
-                                </div>
-                            </div>
-                            <div class="user">
-                                <div class="user-body">
-                                    <div class="user-icon user-icon-online">R</div>
-                                    <h2 class="user-name title">Rain</h2>
-                                </div>
-                            </div>
 
-                            <!-- /*coppy*/ -->
-                            <div class="user">
-                                <div class="user-body">
-                                    <div class="user-icon user-icon-online">A</div>
-                                    <h2 class="user-name title">Alexandr</h2>
+                                <div class="user">
+                                    <div class="user-body">
+                                        <div class="user-icon user-icon-online">
+                                            A
+                                        </div>
+                                        <h2 class="user-name title">
+                                            Alexandr
+                                        </h2>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="user">
-                                <div class="user-body">
-                                    <div class="user-icon user-icon-online">E</div>
-                                    <h2 class="user-name title">Ed</h2>
+                                <div class="user">
+                                    <div class="user-body">
+                                        <div class="user-icon user-icon-online">
+                                            E
+                                        </div>
+                                        <h2 class="user-name title">Ed</h2>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="user">
-                                <div class="user-body">
-                                    <div class="user-icon user-icon-online">R</div>
-                                    <h2 class="user-name title">Rain</h2>
+                                <div class="user">
+                                    <div class="user-body">
+                                        <div class="user-icon user-icon-online">
+                                            R
+                                        </div>
+                                        <h2 class="user-name title">Rain</h2>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="user">
-                                <div class="user-body">
-                                    <div class="user-icon user-icon-online">A</div>
-                                    <h2 class="user-name title">Alexandr</h2>
-                                </div>
-                            </div>
-                            <div class="user">
-                                <div class="user-body">
-                                    <div class="user-icon user-icon-online">E</div>
-                                    <h2 class="user-name title">Ed</h2>
-                                </div>
-                            </div>
-                            <div class="user">
-                                <div class="user-body">
-                                    <div class="user-icon user-icon-online">R</div>
-                                    <h2 class="user-name title">Rain</h2>
-                                </div>
-                            </div>
-                            <div class="user">
-                                <div class="user-body">
-                                    <div class="user-icon user-icon-online">A</div>
-                                    <h2 class="user-name title">Alexandr</h2>
-                                </div>
-                            </div>
-                            <div class="user">
-                                <div class="user-body">
-                                    <div class="user-icon user-icon-online">E</div>
-                                    <h2 class="user-name title">Ed</h2>
-                                </div>
-                            </div>
-                            <div class="user">
-                                <div class="user-body">
-                                    <div class="user-icon user-icon-online">R</div>
-                                    <h2 class="user-name title">Rain</h2>
-                                </div>
-                            </div>
-                            <!-- /*coppy*/ -->
 
-                        </div>
-                        <div class="offline-user">
-                            <h2 class="title status-title">
-                                Offline: 2
-                            </h2>
-                            <div class="user">
-                                <div class="user-body">
-                                    <div class="user-icon user-icon-offline">M</div>
-                                    <h2 class="user-name title offline-title">Mariya</h2>
+                                <!-- /*coppy*/ -->
+                                <div class="user">
+                                    <div class="user-body">
+                                        <div class="user-icon user-icon-online">
+                                            A
+                                        </div>
+                                        <h2 class="user-name title">
+                                            Alexandr
+                                        </h2>
+                                    </div>
+                                </div>
+                                <div class="user">
+                                    <div class="user-body">
+                                        <div class="user-icon user-icon-online">
+                                            E
+                                        </div>
+                                        <h2 class="user-name title">Ed</h2>
+                                    </div>
+                                </div>
+                                <div class="user">
+                                    <div class="user-body">
+                                        <div class="user-icon user-icon-online">
+                                            R
+                                        </div>
+                                        <h2 class="user-name title">Rain</h2>
+                                    </div>
+                                </div>
+                                <div class="user">
+                                    <div class="user-body">
+                                        <div class="user-icon user-icon-online">
+                                            A
+                                        </div>
+                                        <h2 class="user-name title">
+                                            Alexandr
+                                        </h2>
+                                    </div>
+                                </div>
+                                <div class="user">
+                                    <div class="user-body">
+                                        <div class="user-icon user-icon-online">
+                                            E
+                                        </div>
+                                        <h2 class="user-name title">Ed</h2>
+                                    </div>
+                                </div>
+                                <div class="user">
+                                    <div class="user-body">
+                                        <div class="user-icon user-icon-online">
+                                            R
+                                        </div>
+                                        <h2 class="user-name title">Rain</h2>
+                                    </div>
+                                </div>
+                                <div class="user">
+                                    <div class="user-body">
+                                        <div class="user-icon user-icon-online">
+                                            A
+                                        </div>
+                                        <h2 class="user-name title">
+                                            Alexandr
+                                        </h2>
+                                    </div>
+                                </div>
+                                <div class="user">
+                                    <div class="user-body">
+                                        <div class="user-icon user-icon-online">
+                                            E
+                                        </div>
+                                        <h2 class="user-name title">Ed</h2>
+                                    </div>
+                                </div>
+                                <div class="user">
+                                    <div class="user-body">
+                                        <div class="user-icon user-icon-online">
+                                            R
+                                        </div>
+                                        <h2 class="user-name title">Rain</h2>
+                                    </div>
+                                </div>
+                                <!-- /*coppy*/ -->
+                            </div>
+                            <div class="offline-user">
+                                <h2 class="title status-title">Offline: 2</h2>
+                                <div class="user">
+                                    <div class="user-body">
+                                        <div
+                                            class="user-icon user-icon-offline"
+                                        >
+                                            M
+                                        </div>
+                                        <h2
+                                            class="user-name title offline-title"
+                                        >
+                                            Mariya
+                                        </h2>
+                                    </div>
+                                </div>
+                                <div class="user">
+                                    <div class="user-body">
+                                        <div
+                                            class="user-icon user-icon-offline"
+                                        >
+                                            S
+                                        </div>
+                                        <h2
+                                            class="user-name title offline-title"
+                                        >
+                                            Sasha
+                                        </h2>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="user">
-                                <div class="user-body">
-                                    <div class="user-icon user-icon-offline">S</div>
-                                    <h2 class="user-name title offline-title">Sasha</h2>
-                                </div>
-                            </div>
-                        </div>
-                    </aside>
-                    <section class="chat-section">
-                        <section class="message-list">
-                            <!-- Messages -->
-                            <article class="message-body">
-                                <div class="my-message">
-                                    <div class="message-header">
-                                        <h2 class="user-name title">
-                                            Alexandr
-                                        </h2>
-                                        <div class="message-edit">
-                                            <span>Delete</span>
-                                            <span>Edit</span>
+                        </aside>
+                        <section class="chat-section">
+                            <section class="message-list">
+                                <!-- Messages -->
+                                <article class="message-body">
+                                    <div class="my-message">
+                                        <div class="message-header">
+                                            <h2 class="user-name title">
+                                                Alexandr
+                                            </h2>
+                                            <div class="message-edit">
+                                                <span>Delete</span>
+                                                <span>Edit</span>
+                                            </div>
+                                        </div>
+                                        <div class="message">
+                                            Lorem ipsum dolor, sit amet
+                                            consectetur adipisicing elit. Sint
+                                            accusantium architecto libero
+                                            molestiae minima, eaque id, ipsum,
+                                            iusto eveniet rem ipsa. Accusantium
+                                            dolores odio et iure eum quo eaque
+                                            modi.
                                         </div>
                                     </div>
-                                    <div class="message">
-                                        Lorem ipsum dolor, sit amet consectetur adipisicing elit. 
-                                        Sint accusantium architecto libero molestiae minima, eaque id, ipsum, iusto eveniet rem ipsa. 
-                                        Accusantium dolores odio et iure eum quo eaque modi.
-                                    </div>
-                                </div>
-                                
-                                <div class="message-date">
-                                    1 min ago
-                                </div>
-                            </article>
-                            <article class="message-body">
-                                <div class="personal-message">
-                                    <div class="message-header">
-                                        <h2 class="user-name title">
-                                            Ed
-                                        </h2>
-                                    </div>
-                                    <div class="message">
-                                        Lorem ipsum dolor, sit amet
-                                    </div>
-                                </div>
-                                
-                                <div class="message-date">
-                                    5 min ago
-                                </div>
-                            </article>
-                            <article class="message-body">
-                                <div class="other-message">
-                                    <div class="message-header">
-                                        <h2 class="user-name title">
-                                            Sasha
-                                        </h2>
-                                    </div>
-                                    <div class="message">
-                                        Lorem ipsum dolor, sit amet consectetur adipisicing el
-                                    </div>
-                                </div>
-                                
-                                <div class="message-date">
-                                    10 min ago
-                                </div>
-                            </article>
-                            <article class="message-body">
-                                <div class="my-message">
-                                    <div class="message-header">
-                                        <h2 class="user-name title">
-                                            Alexandr
-                                        </h2>
-                                        <div class="message-edit">
-                                            <span>Delete</span>
-                                            <span>Edit</span>
+
+                                    <div class="message-date">1 min ago</div>
+                                </article>
+                                <article class="message-body">
+                                    <div class="personal-message">
+                                        <div class="message-header">
+                                            <h2 class="user-name title">Ed</h2>
+                                        </div>
+                                        <div class="message">
+                                            Lorem ipsum dolor, sit amet
                                         </div>
                                     </div>
-                                    <div class="message">
-                                        Lorem ipsum dolor,
-                                    </div>
-                                </div>
-                                
-                                <div class="message-date">
-                                    1 min ago
-                                </div>
-                            </article>
-                            <article class="message-body">
-                                <div class="personal-message">
-                                    <div class="message-header">
-                                        <h2 class="user-name title">
-                                            Ed
-                                        </h2>
-                                    </div>
-                                    <div class="message">
-                                        Lorem ipsum dolor, sit amet ipsum dolor, sit amet ipsum dolor, sit amet
-                                    </div>
-                                </div>
-                                
-                                <div class="message-date">
-                                    5 min ago
-                                </div>
-                            </article>
-                            <article class="message-body">
-                                <div class="other-message">
-                                    <div class="message-header">
-                                        <h2 class="user-name title">
-                                            Sasha
-                                        </h2>
-                                    </div>
-                                    <div class="message">
-                                        Lorem ipsum dolor, sit amet consectetur adipisicing el
-                                    </div>
-                                </div>
-                                
-                                <div class="message-date">
-                                    10 min ago
-                                </div>
-                            </article>
-                            <article class="message-body">
-                                <div class="my-message">
-                                    <div class="message-header">
-                                        <h2 class="user-name title">
-                                            Alexandr
-                                        </h2>
-                                        <div class="message-edit">
-                                            <span>Delete</span>
-                                            <span>Edit</span>
+
+                                    <div class="message-date">5 min ago</div>
+                                </article>
+                                <article class="message-body">
+                                    <div class="other-message">
+                                        <div class="message-header">
+                                            <h2 class="user-name title">
+                                                Sasha
+                                            </h2>
+                                        </div>
+                                        <div class="message">
+                                            Lorem ipsum dolor, sit amet
+                                            consectetur adipisicing el
                                         </div>
                                     </div>
-                                    <div class="message">
-                                        Lorem ipsum dolor, sit amet consectetur adipisicing elit. 
-                                        Sint accusantium architecto libero molestiae minima, eaque id, ipsum, iusto eveniet rem ipsa. 
-                                        Accusantium dolores odio et iure eum quo eaque modi. ibero molestiae minima, eaque id, ipsum, iusto eveniet rem ipsa. 
-                                        Accusantium dolores odio et iure eum quo eaque modi.
+
+                                    <div class="message-date">10 min ago</div>
+                                </article>
+                                <article class="message-body">
+                                    <div class="my-message">
+                                        <div class="message-header">
+                                            <h2 class="user-name title">
+                                                Alexandr
+                                            </h2>
+                                            <div class="message-edit">
+                                                <span>Delete</span>
+                                                <span>Edit</span>
+                                            </div>
+                                        </div>
+                                        <div class="message">
+                                            Lorem ipsum dolor,
+                                        </div>
+                                    </div>
+
+                                    <div class="message-date">1 min ago</div>
+                                </article>
+                                <article class="message-body">
+                                    <div class="personal-message">
+                                        <div class="message-header">
+                                            <h2 class="user-name title">Ed</h2>
+                                        </div>
+                                        <div class="message">
+                                            Lorem ipsum dolor, sit amet ipsum
+                                            dolor, sit amet ipsum dolor, sit
+                                            amet
+                                        </div>
+                                    </div>
+
+                                    <div class="message-date">5 min ago</div>
+                                </article>
+                                <article class="message-body">
+                                    <div class="other-message">
+                                        <div class="message-header">
+                                            <h2 class="user-name title">
+                                                Sasha
+                                            </h2>
+                                        </div>
+                                        <div class="message">
+                                            Lorem ipsum dolor, sit amet
+                                            consectetur adipisicing el
+                                        </div>
+                                    </div>
+
+                                    <div class="message-date">10 min ago</div>
+                                </article>
+                                <article class="message-body">
+                                    <div class="my-message">
+                                        <div class="message-header">
+                                            <h2 class="user-name title">
+                                                Alexandr
+                                            </h2>
+                                            <div class="message-edit">
+                                                <span>Delete</span>
+                                                <span>Edit</span>
+                                            </div>
+                                        </div>
+                                        <div class="message">
+                                            Lorem ipsum dolor, sit amet
+                                            consectetur adipisicing elit. Sint
+                                            accusantium architecto libero
+                                            molestiae minima, eaque id, ipsum,
+                                            iusto eveniet rem ipsa. Accusantium
+                                            dolores odio et iure eum quo eaque
+                                            modi. ibero molestiae minima, eaque
+                                            id, ipsum, iusto eveniet rem ipsa.
+                                            Accusantium dolores odio et iure eum
+                                            quo eaque modi.
+                                        </div>
+                                    </div>
+
+                                    <div class="message-date">1 min ago</div>
+                                </article>
+                                <article class="message-body">
+                                    <div class="personal-message">
+                                        <div class="message-header">
+                                            <h2 class="user-name title">Ed</h2>
+                                        </div>
+                                        <div class="message">Lorem ipsum</div>
+                                    </div>
+
+                                    <div class="message-date">5 min ago</div>
+                                </article>
+                                <article class="message-body">
+                                    <div class="other-message">
+                                        <div class="message-header">
+                                            <h2 class="user-name title">
+                                                Sasha
+                                            </h2>
+                                        </div>
+                                        <div class="message">
+                                            Lorem ipsum dolor, sit amet
+                                            consectetur
+                                        </div>
+                                    </div>
+
+                                    <div class="message-date">10 min ago</div>
+                                </article>
+                                <article class="message-body">
+                                    <div class="other-message">
+                                        <div class="message-header">
+                                            <h2 class="user-name title">
+                                                Sasha
+                                            </h2>
+                                        </div>
+                                        <div class="message">
+                                            Lorem ipsum dolor, sit amet
+                                            consectetur adipisicing el
+                                        </div>
+                                    </div>
+
+                                    <div class="message-date">10 min ago</div>
+                                </article>
+
+                                <!--  -->
+                                <div class="load-new">
+                                    <span
+                                        class="iconify icon-load"
+                                        data-inline="false"
+                                        data-icon="carbon:cloud-download"
+                                    >
+                                    </span
+                                    ><span>Load more...</span>
+                                </div>
+                            </section>
+                            <div class="typing">
+                                <div class="typing-body">
+                                    <input
+                                        type="text"
+                                        class="typing-area"
+                                        placeholder="Write a message..."
+                                    />
+                                    <div class="send-message">
+                                        <span
+                                            class="iconify icon"
+                                            data-inline="false"
+                                            data-icon="carbon:send-alt"
+                                            style="font-size: 16px"
+                                        ></span>
                                     </div>
                                 </div>
-                                
-                                <div class="message-date">
-                                    1 min ago
-                                </div>
-                            </article>
-                            <article class="message-body">
-                                <div class="personal-message">
-                                    <div class="message-header">
-                                        <h2 class="user-name title">
-                                            Ed
-                                        </h2>
-                                    </div>
-                                    <div class="message">
-                                        Lorem ipsum 
-                                    </div>
-                                </div>
-                                
-                                <div class="message-date">
-                                    5 min ago
-                                </div>
-                            </article>
-                            <article class="message-body">
-                                <div class="other-message">
-                                    <div class="message-header">
-                                        <h2 class="user-name title">
-                                            Sasha
-                                        </h2>
-                                    </div>
-                                    <div class="message">
-                                        Lorem ipsum dolor, sit amet consectetur 
-                                    </div>
-                                </div>
-                                
-                                <div class="message-date">
-                                    10 min ago
-                                </div>
-                            </article>
-                            <article class="message-body">
-                                <div class="other-message">
-                                    <div class="message-header">
-                                        <h2 class="user-name title">
-                                            Sasha
-                                        </h2>
-                                    </div>
-                                    <div class="message">
-                                        Lorem ipsum dolor, sit amet consectetur adipisicing el
-                                    </div>
-                                </div>
-                                
-                                <div class="message-date">
-                                    10 min ago
-                                </div>
-                            </article>
-                            
-                            <!--  -->
-                            <div class="load-new">
-                                <span class="iconify icon-load" data-inline="false" data-icon="carbon:cloud-download">
-                                </span><span>Load more...</span>
                             </div>
                         </section>
-                        <div class="typing">
-                            <div class="typing-body">
-                                <input type="text" class="typing-area" placeholder="Write a message...">
-                                <div class="send-message">
-                                    <span class="iconify icon" data-inline="false" data-icon="carbon:send-alt" style="font-size: 16px;"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
+                    </div>
                 </div>
-            </div>
-        </main>
-        <footer class="footer">
-            <div class="container">
-                <div class="space"></div>
-                <div class="footer-body">
-                    <span>Author: Sary Alexandr</span>
-                    <span>Version: beta-0.3</span>
-                    <span>Special for DataMola JS Camping</span>
+            </main>
+            <footer class="footer">
+                <div class="container">
+                    <div class="space"></div>
+                    <div class="footer-body">
+                        <span>Author: Sary Alexandr</span>
+                        <span>Version: beta-0.3</span>
+                        <span>Date: 24.10.2020</span>
+                        <span>Special for DataMola JS Camping</span>
+                    </div>
                 </div>
-            </div>
-        </footer>
-    </div>
-</body>
+            </footer>
+        </div>
+    </body>
+    <script src="script.js"></script>
 </html>

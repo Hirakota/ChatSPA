@@ -156,6 +156,10 @@ body {
     color:var(--color-2);
 }
 
+.checkbox-body>input[type='checkbox']:checked:hover+span{
+    color: var(--color-1);
+}
+
 /* CURENT USER */
 
 .curent-user {
@@ -396,6 +400,8 @@ body {
 
     margin-bottom: .5rem;
 
+    cursor: pointer;
+
     transition: .3s ease-in-out;
     border-bottom: 1px solid var(--grey-2);
 }
@@ -580,12 +586,16 @@ body {
 
 
 
-@media screen and (max-width: 910px) {
+@media screen and (max-width: 65rem) {
     .container {
         grid-template-columns: 100vw;
     }
 
     .space {
+        display: none;
+    }
+
+    .curent-user {
         display: none;
     }
 }
