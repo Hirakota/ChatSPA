@@ -1,7 +1,17 @@
 const chat = (function () {
+    let counter = (function () {
+        let count = 0;
+
+        return {
+            increment: function () {
+                return "" + ++count;
+            },
+        };
+    })();
+
     let messages = [
         {
-            id: "1",
+            id: counter.increment(),
             text: "added js",
             createdAt: new Date("2020-09-12T23:00:00"),
             author: "Alexandr",
@@ -9,14 +19,14 @@ const chat = (function () {
             to: "Ed",
         },
         {
-            id: "2",
+            id: counter.increment(),
             text: "О, привет. Как дела?",
             createdAt: new Date("2020-09-12T23:01:00"),
             author: "Rion",
             isPersonal: false,
         },
         {
-            id: "3",
+            id: counter.increment(),
             text: "Всем привет!",
             createdAt: new Date("2020-09-12T23:02:00"),
             author: "Ed",
@@ -24,14 +34,14 @@ const chat = (function () {
             to: "Alexandr",
         },
         {
-            id: "4",
+            id: counter.increment(),
             text: "О, привет. Как дела?",
             createdAt: new Date("2020-09-12T23:03:00"),
             author: "Rion",
             isPersonal: false,
         },
         {
-            id: "5",
+            id: counter.increment(),
             text: "Привет!",
             createdAt: new Date("2020-09-12T23:04:00"),
             author: "Ed",
@@ -39,14 +49,14 @@ const chat = (function () {
             to: "Alexandr",
         },
         {
-            id: "6",
+            id: counter.increment(),
             text: "О, привет. Как дела?",
             createdAt: new Date("2020-09-12T23:05:00"),
             author: "Rion",
             isPersonal: false,
         },
         {
-            id: "7",
+            id: counter.increment(),
             text: "Привет!",
             createdAt: new Date("2020-09-12T23:03:50"),
             author: "Alexandr",
@@ -54,91 +64,91 @@ const chat = (function () {
             to: "Ed",
         },
         {
-            id: "8",
+            id: counter.increment(),
             text: "Привет!",
             createdAt: new Date("2020-09-12T23:05:50"),
             author: "Rion",
             isPersonal: false,
         },
         {
-            id: "9",
+            id: counter.increment(),
             text: "Привет всем!",
             createdAt: new Date("2020-09-12T23:06:00"),
             author: "Ed",
             isPersonal: false,
         },
         {
-            id: "10",
+            id: counter.increment(),
             text: "Привет всем!",
             createdAt: new Date("2020-09-12T23:07:00"),
             author: "Ed",
             isPersonal: false,
         },
         {
-            id: "11",
+            id: counter.increment(),
             text: "Привет всем!",
             createdAt: new Date("2020-09-12T23:08:00"),
             author: "Alexandr",
             isPersonal: false,
         },
         {
-            id: "12",
+            id: counter.increment(),
             text: "Привет всем!",
             createdAt: new Date("2020-09-12T23:09:00"),
             author: "Ed",
             isPersonal: false,
         },
         {
-            id: "13",
+            id: counter.increment(),
             text: "Привет всем!",
             createdAt: new Date("2020-09-13T14:06:00"),
             author: "Alexandr",
             isPersonal: false,
         },
         {
-            id: "14",
+            id: counter.increment(),
             text: "Привет всем!",
             createdAt: new Date("2020-09-13T14:07:00"),
             author: "Ed",
             isPersonal: false,
         },
         {
-            id: "15",
+            id: counter.increment(),
             text: "Привет всем!",
             createdAt: new Date("2020-09-13T14:08:00"),
             author: "Rion",
             isPersonal: false,
         },
         {
-            id: "16",
+            id: counter.increment(),
             text: "Привет всем!",
             createdAt: new Date("2020-09-13T14:09:50"),
             author: "Ed",
             isPersonal: false,
         },
         {
-            id: "17",
+            id: counter.increment(),
             text: "всем!",
             createdAt: new Date("2020-09-13T14:10:00"),
             author: "Ed",
             isPersonal: false,
         },
         {
-            id: "18",
+            id: counter.increment(),
             text: "Привет всем!",
             createdAt: new Date("2020-09-13T14:13:00"),
             author: "Rion",
             isPersonal: false,
         },
         {
-            id: "19",
+            id: counter.increment(),
             text: "Привет всем!",
             createdAt: new Date("2020-09-13T14:14:00"),
             author: "Rion",
             isPersonal: false,
         },
         {
-            id: "20",
+            id: counter.increment(),
             text: "Привет всем!",
             createdAt: new Date("2020-09-13T14:19:00"),
             author: "Rion",
@@ -146,7 +156,7 @@ const chat = (function () {
             to: "Ed",
         },
         {
-            id: "21",
+            id: counter.increment(),
             text: "Hi Rion!",
             createdAt: new Date("2020-09-13T14:20:00"),
             author: "Ed",
@@ -163,7 +173,7 @@ const chat = (function () {
         top: 10,
     };
 
-    let filterConfig = {
+    let filterObject = {
         author: "",
         dateFrom: "",
         dateTo: "",
@@ -197,12 +207,12 @@ const chat = (function () {
         },
 
         getMessages: function (
-            skip = settings.skip,
-            top = settings.top,
-            curentFilters = filterConfig
+            skip = 0,
+            top = 10,
+            curentFilters = filterObject
         ) {
             let curentMessages = this.baseFilter();
-            curentMessages.sort((a, b) => +b.createdAt - +a.createdAt);
+
 
             let isFilter = false;
             for (key in curentFilters) {
@@ -304,7 +314,7 @@ const chat = (function () {
                 }
             }
 
-            while (skip + top > curentMessages.length) {
+            /* while (skip + top > curentMessages.length) {
                 if (skip >= 0 && skip + top > curentMessages.length) {
                     skip--;
                 } else {
@@ -312,7 +322,8 @@ const chat = (function () {
                         top = curentMessages.length;
                     }
                 }
-            }
+            } */
+            currentMessages = messages.slice(skip, skip + top); //Можно сделать в одну строку
 
             if (curentMessages.length > 0) {
                 for (let i = 0 + skip; i < top + skip; i++) {
@@ -337,7 +348,7 @@ const chat = (function () {
                 msg = console.error("Не удалось найти сообщение с таким Id");
                 return false;
             } else {
-                msg = messages.find(({ id }) => id === messageId);
+                msg = messages.find(({ id }) => id === messageId); //Vj;yj gjvtyznm
             }
 
             this.writeMessage(msg);
@@ -346,10 +357,9 @@ const chat = (function () {
 
         //Add messsage
         validateMessage: function (msg) {
-            let { id, text, createdAt, author } = msg;
+            let { text, createdAt, author } = msg;
 
             if (
-                id != "" &&
                 text.length <= 200 &&
                 text != "" &&
                 createdAt <= new Date() &&
@@ -385,7 +395,6 @@ const chat = (function () {
                 if (key == "text" || key == "isPersonal" || key == "to") {
                 } else {
                     count++;
-                    delete toEdit[key];
                 }
             }
             if (count > 0)
@@ -402,37 +411,37 @@ const chat = (function () {
         },
 
         removeMessage: function (messageId) {
+            //
             if (this.getMessage(messageId)) {
-                messages.splice(
-                    messages.find(({ id }) => id === messageId),
-                    1
-                );
+                const msg = messages.find(({ id }) => id === messageId);
+                let index = messages.indexOf(msg);
+                console.log(msg);
+                messages.splice(msg, 1);
                 console.warn("Сообщение удалено");
-                return true;
+
+                if(messages.find(({ id }) => id === messageId) === undefined)
+                    console.log(true);
             }
             return false;
         },
 
         // Debbug function
-        createMessage: function (text, to = undefined) {
+        createMessage: function (text, to = '') {
             let msg = {
-                id: undefined,
-                text: "",
+                id: counter.increment(),
+                text: text,
                 createdAt: new Date(),
                 author: curentUser,
                 isPersonal: false,
                 to: "",
             };
 
-            msg.id =
-                "" + (Math.max(...messages.map((message) => message.id)) + 1);
-            msg.text = text;
-
-            if (to != undefined) {
+            if (to > '') {
                 msg.isPersonal = true;
                 msg["to"] = to;
             }
 
+            this.addMessage(msg);
             return msg;
         },
 
@@ -446,6 +455,10 @@ const chat = (function () {
                 " Date: ",
                 msg.createdAt
             );
+        },
+
+        showAll: function () {
+            console.log(messages);
         },
     };
 })();
@@ -462,7 +475,7 @@ chat.getMessages();
 console.warn(
     '---------Создаем сообщение и добовляем его addMessage(createMessage("Ура! НОВОЕ СООБЩЕНИЕ","ed"))'
 );
-chat.addMessage(chat.createMessage("Ура! НОВОЕ СООБЩЕНИЕ ! ", "Rion"));
+chat.createMessage("Ура! НОВОЕ СООБЩЕНИЕ ! ", "Rion");
 chat.getMessages();
 
 chat.curentUser = "";
@@ -496,3 +509,5 @@ chat.getMessage("1");
 console.warn("---------Удаление сообщений");
 chat.removeMessage("1");
 chat.removeMessage("1");
+
+chat.showAll();
