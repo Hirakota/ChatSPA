@@ -168,16 +168,16 @@ const chat = (function () {
     let curentUser = "Ed";
 
     /* Основные параметры */
-    let settings = {
-        skip: 0,
-        top: 10,
-    };
 
-    let filterObject = {
-        author: "",
-        dateFrom: "",
-        dateTo: "",
-        text: "",
+    let filterObj = {
+        author: (item, authorF) =>
+            !authorF ||
+            item.author.toLowerCase().includes(authorF.toLowerCase()),
+        text: (item, textF) =>
+            !textF || item.text.toLowerCase().includes(textF.toLowerCase()),
+        dateFrom: (item, dateFromF) =>
+            !dateFromF || item.createdAt >= dateFromF,
+        dateTo: (item, dateToF) => !dateToF || item.createdAt <= dateToF,
     };
 
     //* Создать модуль с помощью замыкания.
@@ -186,169 +186,70 @@ const chat = (function () {
 
     return {
         baseFilter: function () {
-            let correctMessages = messages.slice(0);
+            let result = messages.slice(0);
 
-            if (curentUser != "") {
-                correctMessages = correctMessages.filter(
+            if (!!this.curentUser) {
+                result = result.filter(
                     ({ author, isPersonal, to }) =>
-                        to === curentUser ||
-                        author === curentUser ||
+                        to === this.curentUser ||
+                        author === this.curentUser ||
                         isPersonal === false
                 );
             } else {
-                correctMessages = correctMessages.filter(
+                result = result.filter(
                     ({ isPersonal }) => isPersonal === false
                 );
             }
 
-            correctMessages.sort((a, b) => +b.createdAt - +a.createdAt);
+            result.sort((a, b) => +b.createdAt - +a.createdAt);
 
-            return correctMessages;
+            return result;
         },
 
-        getMessages: function (
-            skip = 0,
-            top = 10,
-            curentFilters = filterObject
-        ) {
-            let curentMessages = this.baseFilter();
+        getMessages: function (skip = 0, top = 10, filterConfig = {}) {
+            let result = this.baseFilter();
 
-
-            let isFilter = false;
-            for (key in curentFilters) {
-                if (curentFilters[key] === "") continue;
-                switch (key) {
-                    case "author":
-                        {
-                            if (
-                                curentMessages.filter(({ author }) =>
-                                    author
-                                        .toLowerCase()
-                                        .includes(
-                                            curentFilters[key].toLowerCase()
-                                        )
-                                ).length > 0
-                            ) {
-                                curentMessages = curentMessages.filter(
-                                    ({ text }) =>
-                                        author
-                                            .toLowerCase()
-                                            .includes(
-                                                curentFilters[key].toLowerCase()
-                                            )
-                                );
-                            } else {
-                                curentMessages = [];
-                            }
-                            isFilter = true;
-                        }
-                        break;
-                    case "dateFrom":
-                        {
-                            if (
-                                curentMessages.filter(
-                                    ({ createdAt }) =>
-                                        createdAt >=
-                                        new Date(curentFilters[key])
-                                ).length > 0
-                            ) {
-                                curentMessages = curentMessages.filter(
-                                    ({ createdAt }) =>
-                                        createdAt >=
-                                        new Date(curentFilters[key])
-                                );
-                            } else {
-                                curentMessages = [];
-                            }
-                            isFilter = true;
-                        }
-                        break;
-                    case "dateTo":
-                        {
-                            if (
-                                curentMessages.filter(
-                                    ({ createdAt }) =>
-                                        createdAt <=
-                                        new Date(curentFilters[key])
-                                ).length > 0
-                            ) {
-                                curentMessages = curentMessages.filter(
-                                    ({ createdAt }) =>
-                                        createdAt <=
-                                        new Date(curentFilters[key])
-                                );
-                            } else {
-                                curentMessages = [];
-                            }
-
-                            isFilter = true;
-                        }
-                        break;
-                    case "text":
-                        {
-                            if (
-                                curentMessages.filter(({ text }) =>
-                                    text
-                                        .toLowerCase()
-                                        .includes(
-                                            curentFilters[key].toLowerCase()
-                                        )
-                                ).length > 0
-                            ) {
-                                curentMessages = curentMessages.filter(
-                                    ({ text }) =>
-                                        text
-                                            .toLowerCase()
-                                            .includes(
-                                                curentFilters[key].toLowerCase()
-                                            )
-                                );
-                            } else {
-                                curentMessages = [];
-                            }
-                            isFilter = true;
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            /* while (skip + top > curentMessages.length) {
-                if (skip >= 0 && skip + top > curentMessages.length) {
-                    skip--;
-                } else {
-                    if (top >= curentMessages.length) {
-                        top = curentMessages.length;
-                    }
-                }
+            /* for (key in filterConfig) {
+                result = result.filter((item) =>
+                    filterObj[key](item, filterConfig[key])
+                );
             } */
-            currentMessages = messages.slice(skip, skip + top); //Можно сделать в одну строку
 
-            if (curentMessages.length > 0) {
-                for (let i = 0 + skip; i < top + skip; i++) {
-                    console.log(i + 1 + " : ");
-                    this.writeMessage(curentMessages[i]);
+            Object.keys(filterConfig).forEach((key) => {
+                result = result.filter((item) => filterObj[key](item, filterConfig[key]));
+            });
+
+            if(skip < result.length) {
+                while(skip + top > result.length) {
+                    top--;
                 }
             } else {
-                if (isFilter) {
-                    console.warn("По данным поиска не удалось найти сообщения");
-                } else {
-                    console.log("Сообщений пока нет");
-                }
+                console.log("Сообщений не найдено");
+                return [];
             }
 
-            return curentMessages;
+            result = result.slice(skip, top + skip); //Можно сделать в одну строку
+
+            if (result.length > 0) {
+                for (let i = 0; i < top; i++) {
+                    console.log(i + 1 + " : ");
+                    this.writeMessage(result[i]);
+                }
+            } else {
+                console.log("Сообщений пока нет");
+            }
+
+            return result;
         },
 
         getMessage: function (messageId) {
             let msg;
 
-            if (messages.find(({ id }) => id === messageId) === undefined) {
+            if (messages.find(({ id }) => id === messageId) != undefined) {
+                msg = messages.find(({ id }) => id === messageId);
+            } else {
                 msg = console.error("Не удалось найти сообщение с таким Id");
                 return false;
-            } else {
-                msg = messages.find(({ id }) => id === messageId); //Vj;yj gjvtyznm
             }
 
             this.writeMessage(msg);
@@ -357,13 +258,10 @@ const chat = (function () {
 
         //Add messsage
         validateMessage: function (msg) {
-            let { text, createdAt, author } = msg;
-
             if (
-                text.length <= 200 &&
-                text != "" &&
-                createdAt <= new Date() &&
-                author != ""
+                msg.text.length <= 200 &&
+                !!msg.text && !!msg.author &&
+                msg.createdAt <= new Date()
             ) {
                 if (msg.isPersonal == true) {
                     if (msg.to != "") return true;
@@ -376,7 +274,7 @@ const chat = (function () {
 
         addMessage: function (msg) {
             if (!this.validateMessage(msg)) return false;
-
+            
             let len = messages.length;
             messages.push(msg);
 
@@ -387,22 +285,22 @@ const chat = (function () {
 
         //Message editing
         editMessage: function (messageId, toEdit) {
-            let count = 0;
-            let msg = messages.find(({ id }) => id === messageId);
-            let index = messages.indexOf(msg);
+            let index = messages.findIndex(({ id }) => id === messageId);
+            let msg = messages[index];
+            
+            let {text, to} = toEdit;
 
-            for (key in toEdit) {
-                if (key == "text" || key == "isPersonal" || key == "to") {
-                } else {
-                    count++;
-                }
+            if(!!text) {
+                msg.text = toEdit.text;
             }
-            if (count > 0)
-                console.warn("Можно изменить только text, isPersonal, to");
+            if(!!to) {
+                msg.isPersonal = true;
+                msg.to = toEdit.to;
+            } else {
+                msg.isPersonal = false;
+            }
 
-            Object.assign(msg, toEdit);
-
-            if (this.validateMessage(msg)) {
+            if(this.validateMessage(msg)) {
                 messages[index] = msg;
                 return true;
             }
@@ -413,20 +311,19 @@ const chat = (function () {
         removeMessage: function (messageId) {
             //
             if (this.getMessage(messageId)) {
-                const msg = messages.find(({ id }) => id === messageId);
-                let index = messages.indexOf(msg);
-                console.log(msg);
-                messages.splice(msg, 1);
-                console.warn("Сообщение удалено");
+                const index = messages.findIndex(({ id }) => id === messageId);
+                messages.splice(index, 1);
 
-                if(messages.find(({ id }) => id === messageId) === undefined)
-                    console.log(true);
+                if (!!messages.find(({ id }) => id === messageId)) {
+                    console.warn("Сообщение удалено");
+                    return true;
+                }
             }
             return false;
         },
 
         // Debbug function
-        createMessage: function (text, to = '') {
+        createMessage: function (text, to = "") {
             let msg = {
                 id: counter.increment(),
                 text: text,
@@ -436,7 +333,7 @@ const chat = (function () {
                 to: "",
             };
 
-            if (to > '') {
+            if (!!to) {
                 msg.isPersonal = true;
                 msg["to"] = to;
             }
@@ -459,6 +356,7 @@ const chat = (function () {
 
         showAll: function () {
             console.log(messages);
+            return messages;
         },
     };
 })();
@@ -475,7 +373,6 @@ chat.getMessages();
 console.warn(
     '---------Создаем сообщение и добовляем его addMessage(createMessage("Ура! НОВОЕ СООБЩЕНИЕ","ed"))'
 );
-chat.createMessage("Ура! НОВОЕ СООБЩЕНИЕ ! ", "Rion");
 chat.getMessages();
 
 chat.curentUser = "";
@@ -509,5 +406,9 @@ chat.getMessage("1");
 console.warn("---------Удаление сообщений");
 chat.removeMessage("1");
 chat.removeMessage("1");
+
+console.warn("---------Создание сообщения ");
+chat.curentUser = 'Rion';
+chat.createMessage('texttetxetxt', 'Alexandr');
 
 chat.showAll();
