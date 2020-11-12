@@ -16,6 +16,10 @@
       "no-param-reassign": "warn",
       "no-restricted-globals": "warn",
       "no-tabs": "off",
+      "prefer-rest-params": "off",
+      "func-names": "warn",
+      "no-shadow": "warn",
+      "operator-linebreak": "warn",
       "indent": ["error", 4],
     },
     "parserOptions": {
