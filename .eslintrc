@@ -4,5 +4,24 @@
         "es6": true,
         "node": true
     },
-    "extends": ["airbnb/base"]
+    "extends": [
+        "airbnb/base"
+      ],
+    "rules": {
+      "no-plusplus": "off",
+      "max-classes-per-file": ["error", 2],
+      "no-underscore-dangle": "off",
+      "prefer-const": "warn",
+      "prefer-template": "off",
+      "no-param-reassign": "warn",
+      "no-restricted-globals": "warn",
+      "no-tabs": "off",
+      "indent": ["error", 4],
+    },
+    "parserOptions": {
+      "ecmaVersion": 2020,
+      "ecmaFeatures": {
+        "experimentalObjectRestSpread": true
+      }
+    }
 }

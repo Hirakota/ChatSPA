@@ -1,95 +1,115 @@
-/* function fib(n) {
-    if(n === 0) {
-        return 0;
-    }
-
-    let first = 1;
-    let second = 1;
-    console.log(second);
-
-    let result;
-    for(let i = 0; i < n; i++) {
-        result = second + first
-        first = second;
-        second = result;
-
-        console.log(result);
+class Node {
+    constructor(value) {
+        this.value = value;
+        this.next = null;
     }
 }
 
-fib(10);
-console.log('==================');
-function fibonacci(n) {
-    if(n <= 1) {
-        return 1;
+class NodeList {
+    constructor(node = null) {
+        this.root = node;
+        this._length = 0;
     }
 
-    return fibonacci(n - 1) + fibonacci(n - 2);
-}
+    addNode(value, position = undefined) {
+        const node = new Node(value);
+        let currentNode = this.root;
 
-console.log(fibonacci(10)); */
+        if (!currentNode) {
+            this.root = node;
+            this._length++;
 
-function anagram(str, target) {
-  if (str.length !== target.length) {
-    return false;
-  }
+            return node;
+        }
 
-  str = str.toLowerCase();
+        let count = 1;
+        if (!!position && position > 0) {
+            while (count < position) {
+                currentNode = currentNode.next;
+                count++;
+            }
 
-  arr = target.split('');
+            node.next = currentNode.next;
+            currentNode.next = node;
+            this._length++;
 
-  for (let i = 0; i < str.length; i++) {
-    const index = arr.indexOf(str[i]);
-    if (index !== -1) {
-      arr.splice(index, 1);
-    } else {
-      return false;
+            return true;
+        }
+        while (currentNode.next) {
+            currentNode = currentNode.next;
+        }
+
+        currentNode.next = node;
+
+        this._length++;
+
+        return true;
     }
-  }
 
-  return arr.length === 0;
-}
+    searchNodeAt(position) {
+        let currentNode = this.root;
+        const length = this._length;
+        let count = 1;
 
-console.log(anagram('банка', 'кабан'));
+        if (length === 0 || position < 1 || position > length) {
+            console.err('Invailid value');
+        }
 
-//= =====================================
+        while (count < position) {
+            currentNode = currentNode.next;
+            count++;
+        }
 
-function anagram1(firstWord, secondWord) {
-  if (firstWord.length !== secondWord.length) {
-    return false;
-  }
-
-  const charsAn = {};
-  for (const char of (firstWord + secondWord)) {
-    charsAn[char] = charsAn[char] ? charsAn[char] + 1 : 1;
-  }
-
-  for (const key in charsAn) {
-    if (charsAn[key] % 2 !== 0) {
-      return false;
+        return currentNode;
     }
-  }
 
-  return true;
+    removeNode(position) {
+        let currentNode = this.root;
+        const length = this._length;
+        let preNode = null;
+
+        if (this._length === 1) {
+            return false;
+        }
+
+        if (position < 0 || position > length) {
+            return false;
+        }
+
+        let count = 1;
+        while (count < position) {
+            preNode = currentNode;
+            currentNode = currentNode.next;
+            count++;
+        }
+
+        preNode.next = currentNode.next;
+        this._length--;
+
+        return true;
+    }
+
+    printNodes() {
+        let currentNode = this.root;
+        const arr = [];
+
+        while (currentNode.next) {
+            arr.push(currentNode.value);
+            currentNode = currentNode.next;
+        }
+        arr.push(currentNode.value);
+
+        console.log('Print:' + arr.join(', '));
+    }
 }
 
-console.log(anagram1('банка', 'кабан'));
+const list = new NodeList();
 
-//= ===============
-
-function anagram3(s1, s2) {
-  return s1.split('').sort().join('') === s2.split('').sort('').join('');
-}
-
-//= ================
-
-function intersection(s1, s2) {
-  const arr1 = Array.from(s1);
-  const arr2 = Array.from(s2);
-
-  const result = arr1.filter((el) => arr2.includes(el));
-
-  return [...new Set(result)];
-}
-
-console.log(intersection('банка', 'кабан'));
+list.addNode(1);
+list.addNode(2);
+list.addNode(3);
+list.printNodes();
+list.addNode(4, 1);
+list.printNodes();
+list.removeNode(2);
+list.printNodes();

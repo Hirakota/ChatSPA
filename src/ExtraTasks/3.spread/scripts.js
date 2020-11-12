@@ -1,36 +1,36 @@
 const students = [
-  {
-    name: 'Andrey',
-    surname: 'Holubev',
-    age: 18,
+    {
+        name: 'Andrey',
+        surname: 'Holubev',
+        age: 18,
 
-  },
-  {
-    name: 'Alexandr',
-    surname: 'Sary',
-    age: 20,
-  },
-  {
-    name: 'Mariya',
-    surname: 'Belaya',
-    age: 19,
-  },
-  {
-    name: 'Andrey1',
-    surname: 'Holubev1',
-    age: 18,
+    },
+    {
+        name: 'Alexandr',
+        surname: 'Sary',
+        age: 20,
+    },
+    {
+        name: 'Mariya',
+        surname: 'Belaya',
+        age: 19,
+    },
+    {
+        name: 'Andrey1',
+        surname: 'Holubev1',
+        age: 18,
 
-  },
-  {
-    name: 'Alexandr1',
-    surname: 'Sary1',
-    age: 20,
-  },
-  {
-    name: 'Mariya1',
-    surname: 'Belaya1',
-    age: 19,
-  },
+    },
+    {
+        name: 'Alexandr1',
+        surname: 'Sary1',
+        age: 20,
+    },
+    {
+        name: 'Mariya1',
+        surname: 'Belaya1',
+        age: 19,
+    },
 ];
 
 // for(let std of students) {
@@ -61,9 +61,9 @@ console.log(students.filter((student, index) => index % 2 === 0));
 //* =========================
 
 const cat = {
-  name: 'Busya',
-  angry: 10,
-  color: 'black',
+    name: 'Busya',
+    angry: 10,
+    color: 'black',
 };
 
 const { name, angry, color } = cat;
@@ -76,11 +76,11 @@ console.log(students.filter((student) => student.name != 'Alexandr'));
 //* =========================
 
 const human = {
-  name: 'Vasily',
-  gender: 'M',
-  lastname: 'Sas',
-  company: 'DataMola',
-  age: 17,
+    name: 'Vasily',
+    gender: 'M',
+    lastname: 'Sas',
+    company: 'DataMola',
+    age: 17,
 };
 
 let key = Object.keys(human);
@@ -90,26 +90,26 @@ key = Object.values(human);
 console.error(key);
 
 for (const value in human) {
-  console.log(value, ':', human[value]);
+    console.log(value, ':', human[value]);
 }
 
 //* ==========================
 
 function counter() {
-  let count = 0;
+    let count = 0;
 
-  return {
-    increment() {
-      return ++count;
-    },
+    return {
+        increment() {
+            return ++count;
+        },
 
-    decriment() {
-      return --count;
-    },
-    getValue() {
-      return count;
-    },
-  };
+        decriment() {
+            return --count;
+        },
+        getValue() {
+            return count;
+        },
+    };
 }
 
 const myCounter = counter();
