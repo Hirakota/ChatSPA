@@ -13,14 +13,15 @@
       "no-underscore-dangle": "off",
       "prefer-const": "warn",
       "prefer-template": "off",
-      "no-param-reassign": "warn",
-      "no-restricted-globals": "warn",
+      "no-param-reassign": "off",
+      "no-restricted-globals": "off",
       "no-tabs": "off",
       "prefer-rest-params": "off",
-      "func-names": "warn",
+      "func-names": "off",
       "no-shadow": "warn",
       "operator-linebreak": "warn",
       "indent": ["error", 4],
+      "no-console": "off"
     },
     "parserOptions": {
       "ecmaVersion": 2020,
