@@ -218,11 +218,6 @@ class MessageList {
     clear() {
         this._arr = [];
     }
-
-    //! ????????????????????????????????????
-    /* addAll() {
-            return ???;
-        } */
 }
 
 const msgList = new MessageList(defaultStatus, 'Alexandr');
@@ -267,3 +262,17 @@ console.log(`============-list2- Curent user: ${msgList2.user}`);
 msgList2.getPage();
 
 console.log('======================================');
+
+msgList.add('', '', '');
+msgList.add('', '', '');
+msgList.add('', '', '');
+msgList.add('', '', '');
+msgList.add('', '', '');
+msgList.add('', '', '');
+msgList.add('', '', '');
+msgList.add('', '', '');
+msgList.add('', '', '');
+console.log(msgList.addAll());
+
+console.log(msgList.user);
+msgList.getPage();
