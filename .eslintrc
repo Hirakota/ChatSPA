@@ -4,23 +4,16 @@
         "es6": true,
         "node": true
     },
-    "extends": [
-        "airbnb/base"
-      ],
+    "extends": ["airbnb", "airbnb/hooks"],
     "rules": {
-        "no-plusplus": "off",
         "max-classes-per-file": ["error", 2],
-        "no-underscore-dangle": "off",
-        "prefer-const": "warn",
-        "prefer-template": "off",
-        "no-param-reassign": "off",
-        "no-restricted-globals": "off",
-        "prefer-rest-params": "off",
         "func-names": "off",
-        "no-shadow": "warn",
-        "operator-linebreak": "warn",
-        "indent": ["error", 4],
-        "no-console": "off"
+        "no-plusplus": "off",
+        "no-underscore-dangle": "off",
+        "no-console": "off",
+        "no-restricted-globals": "off",
+        "no-param-reassign": "off",
+        "indent": ["error", 4]
     },
     "parserOptions": {
       "ecmaVersion": 2020,
