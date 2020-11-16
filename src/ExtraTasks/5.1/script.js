@@ -14,7 +14,7 @@ function createCalendar(elem, y, m) {
                     {"name": "Sun", "value": 6}];
 
     let arr = [];
-    let date = new Date(y, m, 1)
+    let date = new Date(y, m - 1, 1)
     
     let mounth = date.getMonth();
     while(mounth === date.getMonth()) {
@@ -30,24 +30,6 @@ function createCalendar(elem, y, m) {
             }
         }
     });
-    let calendar = [];
-    let i = 0;
-    let week = 0;
-    while(i < arr.length) {
-        calendar.push([]);
-        for(let j = 0; j < 7; j++) {
-            if(i < arr.length && j === arr[i].name) {
-                calendar[week].push({value: arr[i].value, name: arr[i].name});
-                i++;
-            } else {
-                calendar[week].push({value: '', name: j});
-            }
-        }
-        week++;
-    }
-
-    console.log(calendar);
-
 
     const frm = new DocumentFragment();
     const el = document.getElementById(elem);
@@ -61,28 +43,31 @@ function createCalendar(elem, y, m) {
         newTh.innerText = daysName[i].name;
         newTr.appendChild(newTh);
     }
-
-    
-
     newTab.appendChild(newTr);
-    frm.appendChild(newTab);
+
+    let i = 0;
+    while(i < arr.length) {
+        let newTr = document.createElement('tr');
+        for(let j = 0; j < 7; j++) {
+            const newTd = document.createElement('td');
+            if(i < arr.length && j === arr[i].name) {
+                newTd.innerText = arr[i].value;
+                i++;
+            } else {
+                newTd.innerText = '';
+            }
+
+            newTr.appendChild(newTd);
+        }
+ 
+        newTab.appendChild(newTr);
+    }
+
     
-
+    frm.appendChild(newTab);
     el.appendChild(frm);
-
-    /* const frm = new DocumentFragment();
-    const el = document.querySelector('.message-list');
-
-    messages.forEach((item) => {
-        const newEl = document.createElement('article');
-        newEl.classList.add('message-body');
-        
-        const newDiv = document.createElement('div');
-        newDiv.classList.add('all-message', (item.isPersonal ? 'personal' : 'my') + '-message');
-        frm.appendChild(newDiv);
-
-        frm.appendChild(newEl);
-    }); */
 }
 
-createCalendar('cal', 2020, 10);
+createCalendar('cal', 2012, 9);
+
+
