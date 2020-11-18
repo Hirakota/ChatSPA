@@ -35,25 +35,30 @@ const list = [
     }
 ];
 
-function generateList(arr) {
+function createList(title, arr) {
     const frm = new DocumentFragment();
-    const el = document.getElementById('list');
+    const el = document.querySelector('body');
+
+    const newH2 = document.createElement('h2');
+    newH2.innerText = title;
+    frm.appendChild(newH2);
 
     frm.appendChild(generateNode(arr));
     el.appendChild(frm);
 }
 
-function generateNode(arr) {
+function generateNode(arr, fs = 1) {
     const frm = new DocumentFragment();
 
     const newUl = document.createElement('ul');
+    newUl.style.fontSize = fs >= 1 ? fs + 'rem' : fs + 'em';
     for(let i = 0; i < arr.length; i++) {
         const newLi = document.createElement('li');
         newLi.innerText = arr[i].value;
         newUl.appendChild(newLi);
 
         if(!!arr[i].children) {
-            const childNode = generateNode(arr[i].children);
+            const childNode = generateNode(arr[i].children, 0.9);
             newUl.appendChild(childNode);
         }
     }
@@ -61,4 +66,4 @@ function generateNode(arr) {
     return frm.appendChild(newUl);
 }
 
-generateList(list);
+createList('Hello world',list);
