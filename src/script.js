@@ -544,6 +544,7 @@ addMessage({text: 'Message !!!'});
 addMessage({text: 'Hello warld !!!'});
 removeMessage('7');
 editMessage('8', {text: 'Hello world !!'});
+showMessage(0,10,{author: 'Sasha'});
 
 
 
