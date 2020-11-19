@@ -380,6 +380,7 @@ body {
 }
 
 .message-list {
+    position: relative;
     display: flex;
     flex-direction: column-reverse;
     align-items: end;
@@ -408,6 +409,12 @@ body {
 
 .load-new:hover {
     color: var(--color-1);
+}
+
+.load-new-absolute {
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 .icon-load {
