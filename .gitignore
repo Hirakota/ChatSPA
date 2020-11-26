@@ -1,4 +1,4 @@
 # Ignore the node_modules directory
 node_modules
 script_copy.js
-src/6
+src
