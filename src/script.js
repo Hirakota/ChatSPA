@@ -148,7 +148,7 @@ class Message {
         if (!!text) {
             this._text = text;
         }
-        if (!!to) {
+        if (!!to ||  to === '') {
             this.to = to;
         }
     }
@@ -341,10 +341,35 @@ class HeaderView {
     display() {
         const el = document.getElementById(this._containerId);
         const frm = new DocumentFragment();
+        el.innerHTML = '';
 
         if(!this._user) {
-            el.innerHTML = '';
-            return 0;
+            const newDiv = document.createElement('div');
+            newDiv.classList = 'sign-body'
+            
+            const signIn = document.createElement('span');
+            signIn.innerText = 'Sign in';
+            signIn.classList = 'title sign';
+            signIn.addEventListener('click', (event) => {
+                clearPage();
+                loginPageView.display();
+            });
+
+            const signUp = document.createElement('span');
+            signUp.innerText = 'Sign up';
+            signUp.classList = 'title sign sign-up'
+            signUp.addEventListener('click', (event) => {
+                clearPage();
+                registrPageView.display();
+            });
+
+            newDiv.appendChild(signIn);
+            newDiv.appendChild(signUp);
+
+            frm.appendChild(newDiv);
+            el.appendChild(frm);
+
+            return;
         }
 
         const curentBody = document.createElement('div');
@@ -364,6 +389,12 @@ class HeaderView {
         const logOut = document.createElement('span');
         logOut.classList = 'curent-btn';
         logOut.innerText = 'Log out';
+
+        logOut.addEventListener('click', (event) => {
+            localStorage.setItem('curentUser', '');
+            clearPage();
+            chatPageView.display();
+        });
 
         curent.appendChild(userTitle);
         curent.appendChild(logOut);
@@ -394,6 +425,7 @@ class OnlineUsersView {
         const userTpl = document.getElementById('user-template');
         for (const user of userList) {
             const us = userTpl.content.cloneNode(true);
+            us.querySelector('.user').classList.add('user-online');
             us.querySelector('.user-icon').classList += 'online';
             us.querySelector('.user-icon').textContent = user[0];
 
@@ -402,6 +434,31 @@ class OnlineUsersView {
         }
 
         el.appendChild(frm);
+        this.events();
+    }
+
+    events() {
+        const onlineUsers = document.getElementById(this._containerId);
+        const userArr = onlineUsers.querySelectorAll('div.user');
+
+        onlineUsers.addEventListener('click', (event) => {
+            const user = event.target.closest('div.user');
+            const to = user.querySelector('.user-name').innerText;
+            const isActiveUser = onlineUsers.querySelector('div.user-active');
+
+            if(!!isActiveUser) {
+                isActiveUser.classList.remove('user-active');
+                sessionStorage.setItem('to', '');
+            }
+
+            if(isActiveUser === user) {
+                user.classList.remove('user-active');
+                sessionStorage.setItem('to', '');
+            } else {
+                user.classList.add('user-active');
+                sessionStorage.setItem('to', to);
+            }
+        });
     }
 }
 
@@ -455,26 +512,432 @@ class MessageView {
         const msgTpl = document.getElementById('msg-template');
         for (const message of messages) {
             const msg = msgTpl.content.cloneNode(true);
-            msg.querySelector('.all-message').classList.add(`${message.author === this._user
-                ? 'my' : (message.to === this._user
-                    ? 'personal' : 'other')}-message`);
+
+            const classAdd = `${message.author === this._user ? 'my' : 'other'}-message`;
+
+            let personalStyle;
+            if(!!message.to) {
+                let fromMeTo = `${message.author === this._user ? 'personal-message' : ''}`;
+                personalStyle = `${message.to === this._user ? 'personal-message' : fromMeTo}`;
+
+            }
+            msg.querySelector('.all-message')
+                .classList.add(classAdd);
+
+            if (!!personalStyle && !!this._user) {
+                msg.querySelector('.all-message')
+                    .classList.add(personalStyle);
+            }
+            
+            //disable confirm box
+            msg.querySelector('div.confirm').style.display = 'none';
 
             msg.querySelector('.user-name').textContent = message.author;
             msg.querySelector('.message').textContent = message.text;
             msg.querySelector('.message-date').textContent = timeAgo(message.createdAt);
 
+
+            //remove edit block from other message
+            if (msg.querySelector('div.other-message')) {
+                const removeNode = msg.querySelector('div.message-edit');
+                if (removeNode.parentNode) {
+                    removeNode.parentNode.removeChild(removeNode);
+                }
+            }
+
+            //add id
+            msg.querySelector('article.message-body').id = message.id;
+
             frm.appendChild(msg);
         }
 
         el.appendChild(frm);
+        
         const loadNew = document.getElementById('loadNew-template').content.cloneNode(true);
         console.log(loadNew);
         if(baseHeight === el.scrollHeight) {
             loadNew.querySelector(`.load-new`).classList.add('load-new-absolute');
         }
         el.appendChild(loadNew);
+
+        this._events();
+    }
+
+    _events() {
+        const el = document.getElementById(this._containerId);
+
+        let msgId;
+        const typingBody = document.querySelector('div.typing-body');
+        const cancelEdit = typingBody.querySelector('div.cancel-edit');
+        const input = document.getElementById('msgInp');
+        const editInput = document.getElementById('editMsgInp');
+        const sendBtn = document.getElementById('sendMsg');
+        const editBtn = document.getElementById('editBtn');
+
+        const messages = el.querySelectorAll('div.my-message');
+
+        for(const message of messages) {
+            const id = message.parentNode.id;
+
+            const editType = message.querySelector('div.message-edit');
+            const remove = message.querySelector('#delMsg');
+            const edit = message.querySelector('#editMsg');
+
+            const confirm = message.querySelector('div.confirm');
+            const yes = message.querySelector('#yes');
+            const no = message.querySelector('#no');
+
+            remove.addEventListener('click', (event) => {
+                editType.style.display = 'none';
+                confirm.style.display = ''; 
+            });
+            no.addEventListener('click', (event) => {
+                confirm.style.display = 'none';
+                editType.style.display = ''; 
+            });
+            yes.addEventListener('click', (event) => {
+                const top = parseInt(sessionStorage.getItem('top'));
+                if(top >= 10) {
+                    sessionStorage.setItem('top', top);
+                }
+                removeMessage(id);
+            });
+            
+            edit.addEventListener('click', (event) => {
+                console.log(id);
+                msgId = id;
+
+                sendBtn.style.display = 'none';
+                editBtn.style.display = '';
+
+                input.style.display = 'none';
+                editInput.style.display = '';
+
+                typingBody.classList.add('typing-body-edit');
+                cancelEdit.style.display = '';
+
+                input.value = '';
+                editInput.value = message.querySelector('div.message').innerText;
+                editInput.focus();
+            });
+        }
+
+        editBtn.addEventListener('click', (event) => {
+            editMessage(msgId, {text: editInput.value, to: sessionStorage.getItem('to')});
+
+            editInput.value = '';
+            editBtn.style.display = 'none';
+            sendBtn.style.display = '';
+
+            editInput.style.display = 'none';
+            input.style.display = '';
+
+            typingBody.classList.remove('typing-body-edit');
+            cancelEdit.style.display = 'none';
+        });
+
+        editInput.addEventListener('keypress', (event) => {
+            if(event.key === 'Enter') {
+                editMessage(msgId, {text: editInput.value, to: sessionStorage.getItem('to')});
+
+                editInput.value = '';
+                editBtn.style.display = 'none';
+                sendBtn.style.display = '';
+    
+                editInput.style.display = 'none';
+                input.style.display = '';
+    
+                typingBody.classList.remove('typing-body-edit');
+                cancelEdit.style.display = 'none';
+            }
+        });
+
+        cancelEdit.addEventListener('click', (event) => {
+            editInput.value = '';
+            editBtn.style.display = 'none';
+            sendBtn.style.display = '';
+    
+            editInput.style.display = 'none';
+            input.style.display = '';
+    
+            typingBody.classList.remove('typing-body-edit');
+            cancelEdit.style.display = 'none';
+        });
+
+        const loadNew = document.querySelector('div.load-new');
+        loadNew.addEventListener('click', (event) => {
+            localStorage.setItem('scrollTop', el.scrollTop);
+            sessionStorage.setItem('top', parseInt(sessionStorage.getItem('top')) + 10);
+            showMessage();
+            el.scrollTop = parseInt(localStorage.getItem('scrollTop'));
+        })
     }
 }
+//* Pages View 
+function clearPage() {
+    const body = document.querySelector('body');
+    body.removeChild(document.querySelector('div.wrapper'));
+}
+class ChatPageView {
+    constructor() {
+        this._containerId = 'body';
+        this._pageFrm = 'chat-page';
+    }
+
+    display() {
+        sessionStorage.setItem('top', 10)
+        sessionStorage.setItem('to','');
+        const frm = new DocumentFragment();
+        const el = document.querySelector(this._containerId);
+
+        frm.appendChild(document.getElementById(this._pageFrm).content.cloneNode(true));
+
+        el.appendChild(frm);
+
+        setCurrentUser(localStorage.getItem('curentUser'));
+
+        showUsers();
+        this.events();
+    }
+
+    events() {
+        const input = document.getElementById('msgInp');
+        const sendBtn = document.getElementById('sendMsg');
+
+        const user = localStorage.getItem('curentUser');
+        if(!user) {
+            input.placeholder = 'You should register before send messages';
+            input.disabled = true;
+            sendBtn.disabled = true;
+        }
+
+        input.addEventListener('keypress', (event) => {
+            const to = sessionStorage.getItem('to');
+            if(event.key === 'Enter') {
+                if(!!input.value) {
+                    if(!!to) {
+                        addMessage({text: input.value, to: to});
+                    } else {
+                        addMessage({text: input.value});
+                    }
+
+                    let skip = parseInt(sessionStorage.getItem('skip'));
+                    let top = parseInt(sessionStorage.getItem('top'));
+
+                    if(document.querySelectorAll('div.message').length >= 10) {
+                        top++;
+                        sessionStorage.setItem('top', top);
+                    }
+
+                    input.value = '';
+                }
+            }
+        });
+
+        sendBtn.addEventListener('click', (event) => {
+            const to = sessionStorage.getItem('to');
+            if(!!input.value) {
+                if(!!to) {
+                    addMessage({text: input.value, to: to});
+                } else {
+                    addMessage({text: input.value});
+                }
+
+                let skip = parseInt(sessionStorage.getItem('skip'));
+                let top = parseInt(sessionStorage.getItem('top'));
+
+                if(document.querySelectorAll('div.message').length >= 10) {
+                    top++;
+                    sessionStorage.setItem('top', top);
+                }
+
+                input.value = '';
+            }
+        });
+    }
+}
+
+class LoginPageView {
+    constructor() {
+        this._containerId = 'body';
+        this._loginFrm = 'login-page'
+    }
+
+    display() {
+        const frm = new DocumentFragment();
+        const el = document.querySelector(this._containerId);
+
+        frm.appendChild(document.getElementById(this._loginFrm).content.cloneNode(true));
+
+        el.appendChild(frm);
+        document.getElementById('logInp').focus();
+        document.querySelector('button').disabled = true;
+
+        this.events();
+    }
+
+    events() {
+        const loginRegExp = /[a-zA-Z0-9]{3,12}/;
+        const passRegExp = /[a-zA-Z0-9\_]{6,12}/;
+        
+        const form = document.forms[0];
+
+        const login = document.getElementById('logInp');
+        const pass = document.getElementById('passInp');
+        const submit = document.getElementById('submit');
+        submit.disabled = true;
+        const errText = document.getElementById('errText');
+
+        login.addEventListener('input', (event) => {
+            if(loginRegExp.test(login.value)) {
+                login.classList.remove('form-input-wrong');
+                login.classList.add('form-input-success');
+                
+            } else {
+                login.classList.remove('form-input-success');
+                login.classList.add('form-input-wrong');
+            }
+
+            if (
+                loginRegExp.test(login.value) &&
+                passRegExp.test(pass.value)
+            ) {
+                submit.disabled = false;
+            } else {
+                submit.disabled = true;
+            }
+        });
+
+        pass.addEventListener('input', (event) => {
+            if(passRegExp.test(pass.value)) {
+                pass.classList.remove('form-input-wrong');
+                pass.classList.add('form-input-success');
+            } else {
+                pass.classList.remove('form-input-success');
+                pass.classList.add('form-input-wrong');
+            }
+
+            if (
+                loginRegExp.test(login.value) &&
+                passRegExp.test(pass.value)
+            ) {
+                submit.disabled = false;
+            } else {
+                submit.disabled = true;
+            }
+        });
+
+        form.addEventListener('submit', (event) => {
+            if(!signIn(login.value)) {
+                event.preventDefault();
+                errText.innerText = 'Wrong login or password';
+            }
+        });
+    }
+}
+
+class RegistrPageView {
+    constructor() {
+        this._containerId = 'body';
+        this._registrFrm = 'registr-page'
+    }
+
+    display() {
+        const frm = new DocumentFragment();
+        const el = document.querySelector(this._containerId);
+
+        frm.appendChild(document.getElementById(this._registrFrm).content.cloneNode(true));
+
+        el.appendChild(frm);
+        document.getElementById('logInp').focus();
+        document.querySelector('button').disabled = true;
+
+        this.events();
+    }
+
+    events() {
+        const loginRegExp = /[a-zA-Z0-9]{3,12}/;
+        const passRegExp = /[a-zA-Z0-9\_]{6,12}/;
+
+        const form = document.forms[0];
+        
+        const login = document.getElementById('logInp');
+        const pass = document.getElementById('passInp');
+        const rePass = document.getElementById('rePassInp');
+        const submit = document.getElementById('submit');
+        submit.disabled = true;
+
+        login.addEventListener('input', (event) => {
+            if(loginRegExp.test(login.value)) {
+                login.classList.remove('form-input-wrong');
+                login.classList.add('form-input-success');
+                
+            } else {
+                login.classList.remove('form-input-success');
+                login.classList.add('form-input-wrong');
+            }
+
+            if (
+                (loginRegExp.test(login.value) &&
+                passRegExp.test(pass.value)) &&
+                pass.value === rePass.value
+            ) {
+                submit.disabled = false;
+            } else {
+                submit.disabled = true;
+            }
+        });
+
+        pass.addEventListener('input', (event) => {
+            if(passRegExp.test(pass.value)) {
+                pass.classList.remove('form-input-wrong');
+                pass.classList.add('form-input-success');
+            } else {
+                pass.classList.remove('form-input-success');
+                pass.classList.add('form-input-wrong');
+            }
+
+            if (
+                (loginRegExp.test(login.value) &&
+                passRegExp.test(pass.value)) &&
+                pass.value === rePass.value
+            ) {
+                submit.disabled = false;
+            } else {
+                submit.disabled = true;
+            }
+        });
+
+        rePass.addEventListener('input', (event) => {
+            if(rePass.value === pass.value) {
+                rePass.classList.remove('form-input-wrong');
+                rePass.classList.add('form-input-success');
+            } else {
+                rePass.classList.remove('form-input-success');
+                rePass.classList.add('form-input-wrong');
+            }
+
+            if (
+                (loginRegExp.test(login.value) &&
+                passRegExp.test(pass.value)) &&
+                pass.value === rePass.value
+            ) {
+                submit.disabled = false;
+            } else {
+                submit.disabled = true;
+            }
+        });
+
+        form.addEventListener('submit', (event) => {
+            debugger;
+            if(!signUp(login.value)) {
+                event.preventDefault();
+                errText.innerText = 'User with such login already exists';
+            }
+        });
+    }
+}
+
 
 //* Global Controll -----
 
@@ -485,7 +948,7 @@ function setCurrentUser(user) {
     messageView.user = user;
 
     msgList.user = user;
-    messageView.display(msgList.getPage());
+    showMessage();
 }
 
 function addMessage(msg) {
@@ -495,12 +958,12 @@ function addMessage(msg) {
 
     const {text, to} = msg;
     msgList.add(text, to);
-    messageView.display(msgList.getPage());
+    showMessage();
 }
 
 function editMessage(idF, msg) {
     if(msgList.edit(idF, msg)) {
-        messageView.display(msgList.getPage());
+        showMessage();
     }
 }
 
@@ -509,7 +972,7 @@ function removeMessage(idF) {
     messageView.display(msgList.getPage());
 }
 
-function showMessage(skip = 0, top = 10, filterObj = {}) {
+function showMessage(skip = 0, top = parseInt(sessionStorage.getItem('top')), filterObj = {}) {
     messageView.display(msgList.getPage(skip, top, filterObj));
 }
 
@@ -518,17 +981,63 @@ function showUsers() {
     offlineUsersView.display(userList.getOffline());
 }
 
+//* register and login function
+
+function signIn(login) {
+    const userList = JSON.parse(localStorage.getItem('userList'));
+    if(!!userList) {
+        for(let user of userList.users) {
+            if(user === login) {
+                localStorage.setItem('curentUser', login);
+                clearPage();
+                chatPageView.display();
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+function signUp(login) {
+    const userList = JSON.parse(localStorage.getItem('userList'));
+    if(!!userList) {
+        for(let user of userList.users) {
+            if(user === login) {
+                return false;
+            }
+        } 
+
+        userList.users.push(login);
+        localStorage.setItem('userList', JSON.stringify(userList));
+
+        localStorage.setItem('curentUser', login);
+        clearPage();
+        chatPageView.display();
+
+        return true;
+    }
+}
+
+//* Test
+
 const messages = [
     new Message('added js', 'Sasha', 'Pasha', new Date('2020-10-12T12:01:44')),
     new Message('О, привет. Как дела?', defaultStatus, 'Rion', new Date('2020-10-12T11:01:44')),
-    new Message('Hello world!', defaultStatus, 'Sasha', new Date('2020-10-12T15:01:44')),
-    new Message('Hello world!', defaultStatus, 'Sasha', new Date('2020-11-19T00:30:00')),
-    new Message('Hello world!', defaultStatus, 'ZhenyaH', new Date('2020-11-19T01')),
-    new Message('Hello world!', defaultStatus, 'Dima', new Date()),
+    new Message('Hello world!1', defaultStatus, 'Sasha', new Date('2020-10-12T15:01:44')),
+    new Message('Hello world!2', defaultStatus, 'Sasha', new Date('2020-11-19T00:30:00')),
+    new Message('Hello world!3', defaultStatus, 'ZhenyaH', new Date('2020-11-19T01')),
+    new Message('Hello world!4', defaultStatus, 'Dima', new Date()),
 
 ];
 
+//* SETTING UP 
+sessionStorage.setItem('top', 10);
+sessionStorage.setItem('skip', 0);
+
 const userList = new UserList(['Dima', 'ZhenyaZh', 'ZhenyaH', 'Sasha', 'Pasha'], ['Dima', 'ZhenyaZh']);
+localStorage.setItem('userList', JSON.stringify(userList));
+
 const msgList = new MessageList(messages);
 
 //* View Objects
@@ -537,14 +1046,26 @@ const onlineUsersView = new OnlineUsersView('onlineList');
 const offlineUsersView = new OfflineUsersView('offlineList');
 const messageView = new MessageView('messageList');
 
+//* Pages View
+const chatPageView = new ChatPageView();
+const loginPageView = new LoginPageView();
+const registrPageView = new RegistrPageView();
 
-showUsers();
+//* first page
+chatPageView.display();
+/* if(!!localStorage.getItem('curentUser')) {
+    chatPageView.display();
+} else {
+    loginPageView.display()
+} */
+/* showUsers();
 setCurrentUser('Sasha');
 addMessage({text: 'Message !!!'});
 addMessage({text: 'Hello warld !!!'});
 removeMessage('7');
 editMessage('8', {text: 'Hello world !!'});
-showMessage(0,10,{author: 'Sasha'});
+showMessage(0,10,{author: 'Sasha'}); */
+
 
 
 

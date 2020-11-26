@@ -160,7 +160,40 @@ body {
     color: var(--color-1);
 }
 
-/* CURENT USER */
+/* SIGN FORM */
+.sign-body {
+    display: flex;
+    justify-content: space-around;
+    width: 10rem;
+}
+
+.sign {
+    line-height: 1.9rem;
+
+    cursor: pointer;
+
+    color: var(--dark-grey);
+    font-weight: bold;
+
+    transition: .3s ease-in-out;
+}
+
+.sign:hover {
+    color: var(--color-1);
+}
+
+.sign-up {
+    border-radius: .3rem;
+    border: 1px solid var(--dark-grey);
+
+    transition: .3s ease-in-out;
+}
+
+.sign-up:hover {
+    border-color: var(--color-1);
+}
+
+/* CURRENT USER */
 
 .curent-user {
     display: flex;
@@ -275,25 +308,62 @@ body {
 /* MAIN ASIDE USER */
 .user {
     display: inline-block;
-
-    cursor: pointer;
+    position: relative;
 
     height: 4rem;
     width: 100%;
+
+    transition: all .5s ease-in-out;
 }
 
-.user:hover {
+.user input {
+    visibility: hidden;
+
+    position: absolute;
+    width: 100%;
+    height: 100%;
+
+    top: 0;
+    left: 0;
+}
+
+.user-online {
+    transition: all .5s;
+}
+
+.user-online:hover {
     color:#ffffff;
     border-color: #fff;
+
+    cursor: pointer;
 
     background-color: var(--color-1);
 }
 
-.user:hover .user-icon{
+.user-online:hover .user-icon{
+    border-color: var(--grey-2);
+    transition: all .1s ease-in-out;
+}
+
+.user-online:hover .user-name {
+    color: var(--grey-2);
+    transition: all .9s ease-in-out;
+}
+
+.user-active {
+    color:#ffffff; 
+    border-color: #fff;
+
+    cursor: pointer;
+
+    background-color: var(--color-2) !important;
+}
+
+.user-active .user-icon{
     border-color: var(--grey-2);
 }
 
-.user:hover:not(.offline-user) .user-name {
+.user-active .user-name {
     color: var(--grey-2);
 }
 
@@ -437,25 +507,20 @@ body {
 /* MESSAGE TIPE */
 
 .personal-message {
-    padding: 1rem;
-    color: #000;
-    background-color: var(--grey-1);
-    border-radius: .5rem;
-
     border: 1px solid var(--color-1);
 }
 
 .my-message {
     padding: 1rem;
     color: #000;
-    background-color: var(--grey-2);
+    background-color: var(--grey-1);
     border-radius: .5rem;
 }
 
 .other-message {
     padding: 1rem;
     color: #000;
-    background-color: var(--grey-1);
+    background-color: var(--grey-2);
     border-radius: .5rem;
 }
 
@@ -474,10 +539,24 @@ body {
     opacity: 1;
 }
 
+.other-message .message-edit {
+    display: none;
+}
+
+.confirm {
+    justify-content: space-around !important;
+}
+
 .message-edit {
-    opacity: 0;
+    display: flex;
+
+    justify-content: space-between;
+
+    opacity: .05;
     transition: .5s ease-in-out;
-    color: var(--dark-grey)
+    color: var(--dark-grey);
+
+    width: 5rem;
 }
 
 .message-edit span{
@@ -531,6 +610,11 @@ body {
     border: 1px solid var(--grey-3);
 }
 
+
+.typing-body-edit {
+    grid-template-columns: auto 2rem 5rem !important;
+}
+
 .typing-area {
     margin: 1rem;
 
@@ -546,6 +630,24 @@ body {
     background-color: inherit;
     outline: none;
 }
+
+.cancel-edit {
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+
+    height: 100;
+
+    transition: .3s ease-in-out;
+}
+
+.cancel-edit:hover {
+    color: var(--color-2);
+}
+
+
 
 .send-message {
     display: flex;
@@ -566,6 +668,10 @@ body {
 
 .send-message:hover {
     background-color: var(--color-2);
+}
+
+.send-message:disabled {
+    background-color: var(--dark-grey);
 }
 
 .icon {
@@ -591,7 +697,86 @@ body {
     color: var(--grey-3);
 }
 
+.main-login-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+    height: 100%;
+}
 
+.form-input {
+    background-color: var(--grey-2);
+
+    margin-bottom: 1rem;
+    padding: 0 1rem;
+
+    border: none;
+    border-radius: .5rem;
+
+    height: 3.5rem;
+    width: 25rem;
+}
+
+.form-input::placeholder {
+    font-size: 1rem;
+    color: var(--dark-grey);
+}
+
+.form-input-success {
+    box-shadow: 0 0 0 1px var(--online) !important;
+}
+
+.form-input-wrong {
+    box-shadow: 0 0 0 1px #ac1233 !important;
+}
+
+.form-input:focus {
+    /* outline: var(--color-1) solid 1px;
+    -moz-outline-radius: .5rem; */
+    outline: none;
+    box-shadow: 0 0 0 1px var(--color-1);
+}
+
+.btn-center {
+    text-align: center;
+}
+
+.form-btn {
+    color: white;
+
+    background-color: var(--color-1);
+    
+    border: none;
+    border-radius: .5rem;
+
+    margin: 0 auto;
+
+    width: 15rem;
+    height: 3rem;
+
+    transition: .5s ease-in-out;
+}
+
+.form-btn:disabled {
+    background-color: var(--dark-grey);
+    cursor: not-allowed;
+}
+
+.form-btn:not(:disabled):hover {
+    background-color: var(--color-2);
+}
+
+.form-btn:focus {
+    outline: var(--online);
+    background-color: var(--color-2);
+}
+
+.error-text {
+    margin-top: .5rem;
+    color: #ac1233;
+}
 
 @media screen and (max-width: 65rem) {
     .container {
