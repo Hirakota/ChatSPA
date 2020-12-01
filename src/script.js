@@ -765,7 +765,7 @@ class MessageView {
         loadNew.addEventListener('click', (event) => {
             localStorage.setItem('scrollTop', el.scrollTop);
             sessionStorage.setItem('top', parseInt(sessionStorage.getItem('top')) + 10);
-            showMessage();
+            chatController.showMessage();
             el.scrollTop = parseInt(localStorage.getItem('scrollTop'));
         })
     }
@@ -1025,89 +1025,6 @@ class RegistrPageView {
     }
 }
 
-
-//* Global Controll -----
-
-/* function setCurrentUser(user) {
-    headerView.user = user;
-    headerView.display();
-
-    messageView.user = user;
-
-    msgList.user = user;
-    showMessage();
-}
-
-function addMessage(msg) {
-    if(!msgList.user) {
-        console.warn('User is not authorized');
-    }
-
-    const {text, to} = msg;
-    msgList.add(text, to);
-    showMessage();
-}
-
-function editMessage(idF, msg) {
-    if(msgList.edit(idF, msg)) {
-        showMessage();
-    }
-}
-
-function removeMessage(idF) {
-    msgList.remove(idF);
-    messageView.display(msgList.getPage());
-}
-
-function showMessage(skip = 0, top = parseInt(sessionStorage.getItem('top')), filterObj = {}) {
-    messageView.display(msgList.getPage(skip, top, filterObj));
-}
-
-function showUsers() {
-    onlineUsersView.display(userList.activeUsers);
-    offlineUsersView.display(userList.getOffline());
-} */
-
-//* register and login function
-
-/* function signIn(login) {
-    const userList = JSON.parse(localStorage.getItem('userList'));
-    if(!!userList) {
-        for(let user of userList.users) {
-            if(user === login) {
-                localStorage.setItem('curentUser', login);
-                clearPage();
-                chatPageView.display();
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
-function signUp(login) {
-    const userList = JSON.parse(localStorage.getItem('userList'));
-    if(!!userList) {
-        for(let user of userList.users) {
-            if(user === login) {
-                return false;
-            }
-        } 
-
-        userList.users.push(login);
-        localStorage.setItem('userList', JSON.stringify(userList));
-
-        localStorage.setItem('curentUser', login);
-        clearPage();
-        chatPageView.display();
-
-        return true;
-    }
-} */
-
-//* Test
-
 const messages = [
     new Message('added js', 'Sasha', 'Pasha', new Date('2020-10-12T12:01:44')),
     new Message('О, привет. Как дела?', defaultStatus, 'Rion', new Date('2020-10-12T11:01:44')),
@@ -1118,32 +1035,7 @@ const messages = [
 
 ];
 
-//* SETTING UP 
-/* sessionStorage.setItem('top', 10);
-sessionStorage.setItem('skip', 0);
-
-const userList = new UserList(['Dima', 'ZhenyaZh', 'ZhenyaH', 'Sasha', 'Pasha'], ['Dima', 'ZhenyaZh']);
-localStorage.setItem('userList', JSON.stringify(userList)); */
-
-/* const msgList = new MessageList(messages); */
-
-//* View Objects
-/* const headerView = new HeaderView('curentUser');
-const onlineUsersView = new OnlineUsersView('onlineList');
-const offlineUsersView = new OfflineUsersView('offlineList');
-const messageView = new MessageView('messageList'); */
-
-//* Pages View
-/* const chatPageView = new ChatPageView();
-const loginPageView = new LoginPageView();
-const registrPageView = new RegistrPageView(); */
-
-//* first page
-/* chatPageView.display() */;
-
-//*
-// const search = document.querySelector('.search-body');
-
+//*Controller
 class ChatController {
     constructor() {
         //* Message List n UserList
@@ -1164,7 +1056,6 @@ class ChatController {
     }
 
     signIn(login) {
-        /* this.userList = JSON.parse(localStorage.getItem('userList')); */
         if(!!this.userList) {
             for(let user of this.userList.users) {
                 if(user === login) {
@@ -1180,7 +1071,6 @@ class ChatController {
     }
     
     signUp(login) {
-        /* this.userList = JSON.parse(localStorage.getItem('userList')); */
         if(!!this.userList) {
             for(let user of this.userList.users) {
                 if(user === login) {
@@ -1246,6 +1136,9 @@ class ChatController {
     }
 
     start() {
+        sessionStorage.setItem('skip', 0);
+        sessionStorage.setItem('top', 10);
+        
         this.chatPageView.display();
     }
 }
