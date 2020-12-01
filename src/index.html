@@ -17,192 +17,329 @@
         <title>Document</title>
     </head>
     <body>
-        <div class="wrapper">
-            <header class="header">
-                <div class="container">
-                    <div class="space"></div>
-                    <div class="header-body">
-                        <div class="header-logo">
-                            <h1 class="logo">Just Chat</h1>
-                        </div>
-                        <div class="search-bar">
-                            <div class="search-bar-body">
-                                <span
-                                    class="iconify search-icon"
-                                    data-inline="false"
-                                    data-icon="carbon:search"
-                                ></span>
-                                <input
-                                    class="search-input"
-                                    type="text"
-                                    placeholder="Search..."
-                                />
-
-                                <div class="checkbox-list">
-                                    <span class="checkbox-body">
-                                        <input
-                                            class="ckeckbox-element"
-                                            type="checkbox"
-                                        />
-                                        <span>
-                                            <span
-                                                class="iconify search-icon"
-                                                data-inline="false"
-                                                data-icon="carbon:email"
-                                            ></span>
-                                        </span>
-                                    </span>
-                                    <span class="checkbox-body">
-                                        <input
-                                            class="ckeckbox-element"
-                                            type="checkbox"
-                                        />
-                                        <span>
-                                            <span
-                                                class="iconify search-icon"
-                                                data-inline="false"
-                                                data-icon="carbon:user"
-                                            ></span>
-                                        </span>
-                                    </span>
-                                    <span class="checkbox-body">
-                                        <input
-                                            class="ckeckbox-element"
-                                            type="checkbox"
-                                        />
-                                        <span>
-                                            <span
-                                                class="iconify search-icon"
-                                                data-inline="false"
-                                                data-icon="carbon:calendar"
-                                            ></span>
-                                        </span>
-                                    </span>
-                                </div>
+        <template id="chat-page">
+            <div class="wrapper">
+                <header class="header">
+                    <div class="container">
+                        <div class="space"></div>
+                        <div class="header-body">
+                            <div class="header-logo">
+                                <h1 class="logo">Just Chat</h1>
                             </div>
+                            <div class="search-bar">
+                                <div class="main-search">
+                                    <div class="search-bar-body" id="searchMsg">
+                                        <div id="searchBtn" class="">
+                                            <span
+                                                class="iconify search-icon"
+                                                data-inline="false"
+                                                data-icon="carbon:search"
+                                            ></span>    
+                                        </div>
+                                        
+                                        <input
+                                            class="search-input"
+                                            type="text"
+                                            placeholder="Message text"
+                                            id="searchMsgInp"
+                                        />
+        
+                                        <div class="checkbox-list">
+                                            <span class="checkbox-body">
+                                                <input
+                                                    class="ckeckbox-element"
+                                                    type="checkbox"
+                                                    id="msgCheck"
+                                                />
+                                                <span>
+                                                    <span
+                                                        class="iconify search-icon"
+                                                        data-inline="false"
+                                                        data-icon="carbon:email"
+                                                    ></span>
+                                                </span>
+                                            </span>
+                                            <span class="checkbox-body">
+                                                <input
+                                                    class="ckeckbox-element"
+                                                    type="checkbox"
+                                                    id="userCheck"
+                                                />
+                                                <span>
+                                                    <span
+                                                        class="iconify search-icon"
+                                                        data-inline="false"
+                                                        data-icon="carbon:user"
+                                                    ></span>
+                                                </span>
+                                            </span>
+                                            <span class="checkbox-body">
+                                                <input
+                                                    class="ckeckbox-element"
+                                                    type="checkbox"
+                                                    id="dateCheck"
+                                                />
+                                                <span>
+                                                    <span
+                                                        class="iconify search-icon"
+                                                        data-inline="false"
+                                                        data-icon="carbon:calendar"
+                                                    ></span>
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="sub-search">
+                                        <ul>
+                                            <li>
+                                                <div class="search-bar-body" id="searchUser">
+                                                    <span
+                                                        class="iconify search-icon"
+                                                        data-inline="false"
+                                                        data-icon="carbon:user"
+                                                    ></span>
+                                                    <input
+                                                        class="search-input"
+                                                        type="text"
+                                                        placeholder="User name"
+                                                        id="searchUserInp"
+                                                    />
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="search-bar-body" id="searchDate">
+                                                    <span
+                                                        class="iconify search-icon"
+                                                        data-inline="false"
+                                                        data-icon="carbon:calendar"
+                                                    ></span>
+                                                    <input
+                                                        class="search-input"
+                                                        type="date"
+                                                        placeholder="YYYY-MM-DD"
+                                                        id="searchDateInp"
+                                                    /> 
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            
+                            </div>
+                        </div>
+                        <div class="curent-user" id="curentUser">
+                            <!-- <div class="curent-body">
+                                <div class="curent-icon title">A</div>
+                                <div class="curent">
+                                    <h2 class="title">Alexandr</h2>
+                                    <span class="curent-btn">Log out</span>
+                                </div>
+                            </div> -->
                         </div>
                     </div>
-                    <div class="curent-user" id="curentUser">
-                        <!-- <div class="curent-body">
-                            <div class="curent-icon title">A</div>
-                            <div class="curent">
-                                <h2 class="title">Alexandr</h2>
-                                <span class="curent-btn">Log out</span>
-                            </div>
-                        </div> -->
-                    </div>
-                </div>
-            </header>
-            <main class="main">
-                <div class="container">
-                    <div class="aside-background space"></div>
-                    <div class="main-body">
-                        <aside class="aside">
-                            <template id='user-template'>
-                                <div class="user">
-                                    <div class="user-body">
-                                        <div class="user-icon user-icon-">
+                </header>
+                <main class="main">
+                    <div class="container">
+                        <div class="aside-background space"></div>
+                        <div class="main-body">
+                            <aside class="aside">
+                                <template id='user-template'>
+                                    <div class="user">
+                                        <div class="user-body">
+                                            <div class="user-icon user-icon-">
+                                            </div>
+                                            <h2 class="user-name title">
+                                            </h2>
                                         </div>
-                                        <h2 class="user-name title">
-                                        </h2>
                                     </div>
+                                </template>
+                                <div class="online-user" id='onlineList'>
                                 </div>
-                            </template>
-                            <div class="online-user" id='onlineList'>
-                            </div>
-                            <div class="offline-user" id='offlineList'>
-                                <!-- <h2 class="title status-title">Offline: 2</h2>
-                                <div class="user">
-                                    <div class="user-body">
-                                        <div
-                                            class="user-icon user-icon-offline"
-                                        >
-                                            M
-                                        </div>
-                                        <h2
-                                            class="user-name title offline-title"
-                                        >
-                                            Mariya
-                                        </h2>
-                                    </div>
+                                <div class="offline-user" id='offlineList'>
                                 </div>
-                                <div class="user">
-                                    <div class="user-body">
-                                        <div
-                                            class="user-icon user-icon-offline"
-                                        >
-                                            S
+                            </aside>
+                            <section class="chat-section">
+                                <template id='msg-template'>
+                                    <article class="message-body">
+                                        <div class="all-message">
+                                            <div class="message-header">
+                                                <h2 class="user-name title">{{ Author }}</h2>
+                                                <div class="message-edit">
+                                                    <span id="delMsg">Delete</span>
+                                                    <span id="editMsg">Edit</span>
+                                                </div>
+                                                <div class="message-edit confirm">
+                                                    <span id="no">No</span>
+                                                    <span id="yes">Yes</span>
+                                                </div>
+                                            </div>
+                                            <div class="message">
+                                                {{ message }}
+                                            </div>
                                         </div>
-                                        <h2
-                                            class="user-name title offline-title"
-                                        >
-                                            Sasha
-                                        </h2>
-                                    </div>
-                                </div> -->
-                            </div>
-                        </aside>
-                        <section class="chat-section">
-                            <template id='msg-template'>
-                                <article class="message-body">
-                                    <div class="all-message">
-                                        <div class="message-header">
-                                            <h2 class="user-name title">Ed</h2>
-                                        </div>
-                                        <div class="message">
-                                            Lorem ipsum dolor, sit amet
-                                        </div>
-                                    </div>
-                                    <div class="message-date">5 min ago</div>
-                                </article>
-                            </template>
-                            <template id="loadNew-template">
-                                <div class="load-new">
-                                    <span
-                                        class="iconify icon-load"
-                                        data-inline="false"
-                                        data-icon="carbon:cloud-download"
-                                    >
-                                    </span>
-                                    <span>Load more...</span>
-                                </div> 
-                            </template>
-                            <section class="message-list" id="messageList">
-                                                           
-                            </section>
-                            <div class="typing">
-                                <div class="typing-body">
-                                    <input
-                                        type="text"
-                                        class="typing-area"
-                                        placeholder="Write a message..."
-                                    />
-                                    <div class="send-message">
+                                        <div class="message-date">{{ time }}</div>
+                                    </article>
+                                </template>
+                                <template id="loadNew-template">
+                                    <div class="load-new">
                                         <span
-                                            class="iconify icon"
+                                            class="iconify icon-load"
                                             data-inline="false"
-                                            data-icon="carbon:send-alt"
-                                            style="font-size: 16px"
-                                        ></span>
+                                            data-icon="carbon:cloud-download"
+                                        >
+                                        </span>
+                                        <span>Load more...</span>
+                                    </div> 
+                                </template>
+                                <section class="message-list" id="messageList">
+                                                               
+                                </section>
+                                <div class="typing">
+                                    <div class="typing-body">
+                                        <input
+                                            type="text"
+                                            class="typing-area"
+                                            placeholder="Write a message..."
+                                            id="msgInp"
+                                        />
+                                        <input
+                                            type="text"
+                                            class="typing-area"
+                                            style="display: none;"
+                                            placeholder="Write a message..."
+                                            id="editMsgInp"
+                                        />
+                                        <div class="cancel-edit" style="display: none;">
+                                            <span 
+                                            class="iconify icon title" 
+                                            data-inline="false" 
+                                            data-icon="carbon:close"
+                                            ></span>
+                                        </div>
+                                        <button class="send-message" id='sendMsg'>
+                                            <span
+                                                class="iconify icon title"
+                                                data-inline="false"
+                                                data-icon="carbon:send-alt"
+                                            ></span>
+                                        </button>
+                                        <button class="send-message" style="display: none;" id='editBtn'>
+                                            <span 
+                                                class="iconify icon title" 
+                                                data-inline="false" 
+                                                data-icon="carbon:edit"
+                                            ></span>
+                                        </button>
                                     </div>
                                 </div>
+                            </section>
+                        </div>
+                    </div>
+                </main>
+                <footer class="footer">
+                    <div class="container">
+                        <div class="space"></div>
+                        <div class="footer-body">
+                            <span>Author: Sary Alexandr</span>
+                            <span>Version: beta-0.3</span>
+                            <span>Date: 25.11.2020</span>
+                            <span>Special for DataMola JS Camping</span>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </template>
+        <template id="login-page">
+            <div class="wrapper">
+                <header class="header">
+                    <div class="container">
+                        <div class="space"></div>
+                        <div class="header-body">
+                            <div class="header-logo">
+                                <h1 class="logo">Just Chat</h1>
+                            </div>   
+                        </div>  
+                    </div>
+                </header>
+
+
+                <main class="main">
+                    <div class="main-login-body">
+                        <form action="" id="login-form">
+                            <div>
+                                <input type="text" class="form-input text" id="logInp" placeholder="Login">
                             </div>
-                        </section>
+                            <div>   
+                                <input type="password" class="form-input text" id="passInp" placeholder="Password">
+                            </div>
+                            <div class="btn-center">
+                                <button type="submit" class="form-btn title" id="submit">Sign in</button>
+                                <p class="error-text" id="errText"></p>
+                            </div>
+                        </form>
                     </div>
-                </div>
-            </main>
-            <footer class="footer">
-                <div class="container">
-                    <div class="space"></div>
-                    <div class="footer-body">
-                        <span>Author: Sary Alexandr</span>
-                        <span>Version: beta-0.3</span>
-                        <span>Date: 24.10.2020</span>
-                        <span>Special for DataMola JS Camping</span>
+                </main>
+
+                <footer class="footer">
+                    <div class="container">
+                        <div class="space"></div>
+                        <div class="footer-body">
+                            <span>Author: Sary Alexandr</span>
+                            <span>Version: beta-0.3</span>
+                            <span>Date: 24.10.2020</span>
+                            <span>Special for DataMola JS Camping</span>
+                        </div>
                     </div>
-                </div>
-            </footer>
-        </div>
+                </footer>
+        </template>
+        <template id="registr-page">
+            <div class="wrapper">
+                <header class="header">
+                    <div class="container">
+                        <div class="space"></div>
+                        <div class="header-body">
+                            <div class="header-logo">
+                                <h1 class="logo">Just Chat</h1>
+                            </div>   
+                        </div>  
+                    </div>
+                </header>
+
+
+                <main class="main">
+                    <div class="main-login-body">
+                        <form action="" id="login-form">
+                            <div>
+                                <input type="text" class="form-input text" id="logInp" placeholder="Login">
+                            </div>
+                            <div>   
+                                <input type="password" class="form-input text" id="passInp" placeholder="Password">
+                            </div>
+                            <div>   
+                                <input type="password" class="form-input text" id="rePassInp" placeholder="Repeat password">
+                            </div>
+                            <div class="btn-center">
+                                <button type="submit" class="form-btn title" id='submit'>Sign up</button>
+                                <p class="error-text" id="errText"></p>
+                            </div>
+                            
+                        </form>
+                    </div>
+                </main>
+
+                <footer class="footer">
+                    <div class="container">
+                        <div class="space"></div>
+                        <div class="footer-body">
+                            <span>Author: Sary Alexandr</span>
+                            <span>Version: beta-0.3</span>
+                            <span>Date: 24.10.2020</span>
+                            <span>Special for DataMola JS Camping</span>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </template>
     </body>
     <script src="script.js"></script>
 </html>
