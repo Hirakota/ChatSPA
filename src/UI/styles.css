@@ -76,19 +76,35 @@ body {
 
 /* SEARCH BAR */
 .search-bar {
-    display: flex;
+    position: relative;
+
+    display: grid;
     align-items: center;
+
+    grid-template-columns: 30rem auto;
 
     padding-left: 2rem;
 
     height: 100%;
 }
 
+.search-bar ul {
+    list-style: none;
+}
+
+.search-bar:hover .sub-search {
+    display: block;
+    position: absolute;
+    left: inherit
+}
+
+.sub-search {
+    display: none;
+}
+
 .search-bar-body  {
     display: flex;
     flex-direction: row;
-
-    width: 30rem;
     
     padding: .5rem 1rem;
 
@@ -96,11 +112,24 @@ body {
 
     background-color: white;
     color: var(--dark-grey);
+
+    border: 1px solid var(--grey-2);
 }
 
 .search-icon {
     font-size: 1.5rem;
 }
+
+.search-btn {
+    color: var(--color-1);
+    
+    transition: .4s ease-in-out;
+    cursor: pointer;
+}
+.search-btn:hover {
+    color: var(--color-2);
+}
+
 
 .search-input {
     border: none;
@@ -144,12 +173,13 @@ body {
 .checkbox-body>input[type='checkbox']+span{
     transition: .3s ease-in-out;
     color:var(--dark-grey);
+
 }
 
-.checkbox-body>input[type='checkbox']:hover+span{
+/* .checkbox-body>input[type='checkbox']:hover+span{
     transition: .3s ease-in-out;
     color:var(--color-1);
-}
+} */
   
 .checkbox-body>input[type='checkbox']:checked+span{
     transition: .3s ease-in-out;
@@ -791,3 +821,4 @@ body {
         display: none;
     }
 }
+

@@ -27,60 +27,104 @@
                                 <h1 class="logo">Just Chat</h1>
                             </div>
                             <div class="search-bar">
-                                <div class="search-bar-body">
-                                    <span
-                                        class="iconify search-icon"
-                                        data-inline="false"
-                                        data-icon="carbon:search"
-                                    ></span>
-                                    <input
-                                        class="search-input"
-                                        type="text"
-                                        placeholder="Search..."
-                                    />
-    
-                                    <div class="checkbox-list">
-                                        <span class="checkbox-body">
-                                            <input
-                                                class="ckeckbox-element"
-                                                type="checkbox"
-                                            />
-                                            <span>
-                                                <span
-                                                    class="iconify search-icon"
-                                                    data-inline="false"
-                                                    data-icon="carbon:email"
-                                                ></span>
+                                <div class="main-search">
+                                    <div class="search-bar-body" id="searchMsg">
+                                        <div id="searchBtn" class="">
+                                            <span
+                                                class="iconify search-icon"
+                                                data-inline="false"
+                                                data-icon="carbon:search"
+                                            ></span>    
+                                        </div>
+                                        
+                                        <input
+                                            class="search-input"
+                                            type="text"
+                                            placeholder="Message text"
+                                            id="searchMsgInp"
+                                        />
+        
+                                        <div class="checkbox-list">
+                                            <span class="checkbox-body">
+                                                <input
+                                                    class="ckeckbox-element"
+                                                    type="checkbox"
+                                                    id="msgCheck"
+                                                />
+                                                <span>
+                                                    <span
+                                                        class="iconify search-icon"
+                                                        data-inline="false"
+                                                        data-icon="carbon:email"
+                                                    ></span>
+                                                </span>
                                             </span>
-                                        </span>
-                                        <span class="checkbox-body">
-                                            <input
-                                                class="ckeckbox-element"
-                                                type="checkbox"
-                                            />
-                                            <span>
-                                                <span
-                                                    class="iconify search-icon"
-                                                    data-inline="false"
-                                                    data-icon="carbon:user"
-                                                ></span>
+                                            <span class="checkbox-body">
+                                                <input
+                                                    class="ckeckbox-element"
+                                                    type="checkbox"
+                                                    id="userCheck"
+                                                />
+                                                <span>
+                                                    <span
+                                                        class="iconify search-icon"
+                                                        data-inline="false"
+                                                        data-icon="carbon:user"
+                                                    ></span>
+                                                </span>
                                             </span>
-                                        </span>
-                                        <span class="checkbox-body">
-                                            <input
-                                                class="ckeckbox-element"
-                                                type="checkbox"
-                                            />
-                                            <span>
-                                                <span
-                                                    class="iconify search-icon"
-                                                    data-inline="false"
-                                                    data-icon="carbon:calendar"
-                                                ></span>
+                                            <span class="checkbox-body">
+                                                <input
+                                                    class="ckeckbox-element"
+                                                    type="checkbox"
+                                                    id="dateCheck"
+                                                />
+                                                <span>
+                                                    <span
+                                                        class="iconify search-icon"
+                                                        data-inline="false"
+                                                        data-icon="carbon:calendar"
+                                                    ></span>
+                                                </span>
                                             </span>
-                                        </span>
+                                        </div>
+                                    </div>
+                                    <div class="sub-search">
+                                        <ul>
+                                            <li>
+                                                <div class="search-bar-body" id="searchUser">
+                                                    <span
+                                                        class="iconify search-icon"
+                                                        data-inline="false"
+                                                        data-icon="carbon:user"
+                                                    ></span>
+                                                    <input
+                                                        class="search-input"
+                                                        type="text"
+                                                        placeholder="User name"
+                                                        id="searchUserInp"
+                                                    />
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="search-bar-body" id="searchDate">
+                                                    <span
+                                                        class="iconify search-icon"
+                                                        data-inline="false"
+                                                        data-icon="carbon:calendar"
+                                                    ></span>
+                                                    <input
+                                                        class="search-input"
+                                                        type="date"
+                                                        placeholder="YYYY-MM-DD"
+                                                        id="searchDateInp"
+                                                    /> 
+                                                </div>
+                                            </li>
+                                        </ul>
                                     </div>
                                 </div>
+                            
                             </div>
                         </div>
                         <div class="curent-user" id="curentUser">

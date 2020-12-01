@@ -351,16 +351,16 @@ class HeaderView {
             signIn.innerText = 'Sign in';
             signIn.classList = 'title sign';
             signIn.addEventListener('click', (event) => {
-                clearPage();
-                loginPageView.display();
+                chatController.clearPage();
+                chatController.loginPageView.display();
             });
 
             const signUp = document.createElement('span');
             signUp.innerText = 'Sign up';
             signUp.classList = 'title sign sign-up'
             signUp.addEventListener('click', (event) => {
-                clearPage();
-                registrPageView.display();
+                chatController.clearPage();
+                chatController.registrPageView.display();
             });
 
             newDiv.appendChild(signIn);
@@ -392,8 +392,8 @@ class HeaderView {
 
         logOut.addEventListener('click', (event) => {
             localStorage.setItem('curentUser', '');
-            clearPage();
-            chatPageView.display();
+            chatController.clearPage();
+            chatController.chatPageView.display();
         });
 
         curent.appendChild(userTitle);
@@ -403,6 +403,103 @@ class HeaderView {
         curentBody.appendChild(curent);
         frm.appendChild(curentBody);
         el.appendChild(frm);
+
+        this._events();
+    }
+
+    _events() {
+        const searchBtn = document.getElementById('searchBtn');
+
+        const msgCheck = document.getElementById('msgCheck');
+        const searchMsgInp = document.getElementById('searchMsgInp');
+
+        const userCheck = document.getElementById('userCheck');
+        const searchUserInp = document.getElementById('searchUserInp');
+
+        const dateCheck = document.getElementById('dateCheck');
+        const searchDateInp = document.getElementById('searchDateInp');
+
+        //* inputs
+        searchMsgInp.addEventListener('input', (event) => {
+            if(!!searchMsgInp.value) {
+                msgCheck.checked = true;
+                searchBtn.classList.add('search-btn');
+            } else {
+                msgCheck.checked = false;
+                searchBtn.classList.remove('search-btn');
+            }
+
+            
+        });
+        searchUserInp.addEventListener('input', () => {
+            if(!!searchUserInp.value) {
+                userCheck.checked = true;
+                searchBtn.classList.add('search-btn');
+            } else {
+                userCheck.checked = false;
+                searchBtn.classList.remove('search-btn');
+            }
+        });
+        searchDateInp.addEventListener('input', () => {
+            if(!!searchDateInp.value) {
+                dateCheck.checked = true;
+                searchBtn.classList.add('search-btn');
+            } else {
+                dateCheck.checked = false;
+                searchBtn.classList.remove('search-btn');
+            }
+        });
+
+        // *checkboxes
+        msgCheck.addEventListener('click', () => {
+            if(!msgCheck.checked) {
+                searchMsgInp.value = '';
+                if(!msgCheck.checked && !userCheck.checked && !dateCheck.checked) {
+                    searchBtn.classList.remove('search-btn');
+                }
+            } else {
+                msgCheck.checked = false;
+            }
+        });
+        userCheck.addEventListener('click', () => {
+            if(!userCheck.checked) {
+                searchUserInp.value = '';
+                if(!msgCheck.checked && !userCheck.checked && !dateCheck.checked) {
+                    searchBtn.classList.remove('search-btn');
+                }
+            } else {
+                userCheck.checked = false;
+            }
+        });
+        dateCheck.addEventListener('click', () => {
+            if(!dateCheck.checked) {
+                searchDateInp.value = '';
+                if(!msgCheck.checked && !userCheck.checked && !dateCheck.checked) {
+                    searchBtn.classList.remove('search-btn');
+                }
+            } else {
+                dateCheck.checked = false;
+            }
+        });
+
+        //* SearchBtn
+        searchBtn.addEventListener('click', () => {
+            const filterObj = {
+                text: searchMsgInp.value || '',
+                author: searchUserInp.value || '',
+                dateTo: ''
+            };
+
+            if(!!searchDateInp.value) {
+                filterObj.dateTo = new Date(searchDateInp.value)
+            }
+
+            console.log(filterObj);
+            chatController.showMessage(0, 10, filterObj);
+        });
+        if(msgCheck.checked || userCheck.checked || dateCheck.checked) {
+            searchBtn.classList.add('search-btn');
+        }
     }
 }
 
@@ -600,7 +697,7 @@ class MessageView {
                 if(top >= 10) {
                     sessionStorage.setItem('top', top);
                 }
-                removeMessage(id);
+                chatController.removeMessage(id);
             });
             
             edit.addEventListener('click', (event) => {
@@ -623,7 +720,7 @@ class MessageView {
         }
 
         editBtn.addEventListener('click', (event) => {
-            editMessage(msgId, {text: editInput.value, to: sessionStorage.getItem('to')});
+            chatController.editMessage(msgId, {text: editInput.value, to: sessionStorage.getItem('to')});
 
             editInput.value = '';
             editBtn.style.display = 'none';
@@ -674,10 +771,6 @@ class MessageView {
     }
 }
 //* Pages View 
-function clearPage() {
-    const body = document.querySelector('body');
-    body.removeChild(document.querySelector('div.wrapper'));
-}
 class ChatPageView {
     constructor() {
         this._containerId = 'body';
@@ -694,9 +787,9 @@ class ChatPageView {
 
         el.appendChild(frm);
 
-        setCurrentUser(localStorage.getItem('curentUser'));
+        chatController.setCurrentUser(localStorage.getItem('curentUser'));
 
-        showUsers();
+        chatController.showUsers();
         this.events();
     }
 
@@ -716,18 +809,13 @@ class ChatPageView {
             if(event.key === 'Enter') {
                 if(!!input.value) {
                     if(!!to) {
-                        addMessage({text: input.value, to: to});
+                        chatController.addMessage({text: input.value, to: to});
                     } else {
-                        addMessage({text: input.value});
+                        chatController.addMessage({text: input.value});
                     }
 
                     let skip = parseInt(sessionStorage.getItem('skip'));
                     let top = parseInt(sessionStorage.getItem('top'));
-
-                    if(document.querySelectorAll('div.message').length >= 10) {
-                        top++;
-                        sessionStorage.setItem('top', top);
-                    }
 
                     input.value = '';
                 }
@@ -738,9 +826,9 @@ class ChatPageView {
             const to = sessionStorage.getItem('to');
             if(!!input.value) {
                 if(!!to) {
-                    addMessage({text: input.value, to: to});
+                    chatController.addMessage({text: input.value, to: to});
                 } else {
-                    addMessage({text: input.value});
+                    chatController.addMessage({text: input.value});
                 }
 
                 let skip = parseInt(sessionStorage.getItem('skip'));
@@ -828,7 +916,7 @@ class LoginPageView {
         });
 
         form.addEventListener('submit', (event) => {
-            if(!signIn(login.value)) {
+            if(!chatController.signIn(login.value)) {
                 event.preventDefault();
                 errText.innerText = 'Wrong login or password';
             }
@@ -929,8 +1017,7 @@ class RegistrPageView {
         });
 
         form.addEventListener('submit', (event) => {
-            debugger;
-            if(!signUp(login.value)) {
+            if(!chatController.signUp(login.value)) {
                 event.preventDefault();
                 errText.innerText = 'User with such login already exists';
             }
@@ -941,7 +1028,7 @@ class RegistrPageView {
 
 //* Global Controll -----
 
-function setCurrentUser(user) {
+/* function setCurrentUser(user) {
     headerView.user = user;
     headerView.display();
 
@@ -979,11 +1066,11 @@ function showMessage(skip = 0, top = parseInt(sessionStorage.getItem('top')), fi
 function showUsers() {
     onlineUsersView.display(userList.activeUsers);
     offlineUsersView.display(userList.getOffline());
-}
+} */
 
 //* register and login function
 
-function signIn(login) {
+/* function signIn(login) {
     const userList = JSON.parse(localStorage.getItem('userList'));
     if(!!userList) {
         for(let user of userList.users) {
@@ -1017,7 +1104,7 @@ function signUp(login) {
 
         return true;
     }
-}
+} */
 
 //* Test
 
@@ -1032,41 +1119,136 @@ const messages = [
 ];
 
 //* SETTING UP 
-sessionStorage.setItem('top', 10);
+/* sessionStorage.setItem('top', 10);
 sessionStorage.setItem('skip', 0);
 
 const userList = new UserList(['Dima', 'ZhenyaZh', 'ZhenyaH', 'Sasha', 'Pasha'], ['Dima', 'ZhenyaZh']);
-localStorage.setItem('userList', JSON.stringify(userList));
+localStorage.setItem('userList', JSON.stringify(userList)); */
 
-const msgList = new MessageList(messages);
+/* const msgList = new MessageList(messages); */
 
 //* View Objects
-const headerView = new HeaderView('curentUser');
+/* const headerView = new HeaderView('curentUser');
 const onlineUsersView = new OnlineUsersView('onlineList');
 const offlineUsersView = new OfflineUsersView('offlineList');
-const messageView = new MessageView('messageList');
+const messageView = new MessageView('messageList'); */
 
 //* Pages View
-const chatPageView = new ChatPageView();
+/* const chatPageView = new ChatPageView();
 const loginPageView = new LoginPageView();
-const registrPageView = new RegistrPageView();
+const registrPageView = new RegistrPageView(); */
 
 //* first page
-chatPageView.display();
-/* if(!!localStorage.getItem('curentUser')) {
-    chatPageView.display();
-} else {
-    loginPageView.display()
-} */
-/* showUsers();
-setCurrentUser('Sasha');
-addMessage({text: 'Message !!!'});
-addMessage({text: 'Hello warld !!!'});
-removeMessage('7');
-editMessage('8', {text: 'Hello world !!'});
-showMessage(0,10,{author: 'Sasha'}); */
+/* chatPageView.display() */;
 
+//*
+// const search = document.querySelector('.search-body');
 
+class ChatController {
+    constructor() {
+        //* Message List n UserList
+        this.msgList = new MessageList(messages);
 
+        this.userList = new UserList(['Dima', 'ZhenyaZh', 'ZhenyaH', 'Sasha', 'Pasha'], ['Dima', 'ZhenyaZh']);
 
+        //* View
+        this.headerView = new HeaderView('curentUser');
+        this.onlineUsersView = new OnlineUsersView('onlineList');
+        this.offlineUsersView = new OfflineUsersView('offlineList');
+        this.messageView = new MessageView('messageList');
 
+        //* Page view
+        this.chatPageView = new ChatPageView();
+        this.loginPageView = new LoginPageView();
+        this.registrPageView = new RegistrPageView();
+    }
+
+    signIn(login) {
+        /* this.userList = JSON.parse(localStorage.getItem('userList')); */
+        if(!!this.userList) {
+            for(let user of this.userList.users) {
+                if(user === login) {
+                    localStorage.setItem('curentUser', login);
+                    this.clearPage();
+                    this.chatPageView.display();
+                    return true;
+                }
+            }
+        }
+    
+        return false;
+    }
+    
+    signUp(login) {
+        /* this.userList = JSON.parse(localStorage.getItem('userList')); */
+        if(!!this.userList) {
+            for(let user of this.userList.users) {
+                if(user === login) {
+                    return false;
+                }
+            } 
+            debugger;
+    
+            this.userList.users.push(login);
+            localStorage.setItem('userList', JSON.stringify(this.userList));
+    
+            localStorage.setItem('curentUser', login);
+            this.clearPage();
+            this.chatPageView.display();
+    
+            return true;
+        }
+    }
+
+    setCurrentUser(user) {
+        this.headerView.user = user;
+        this.headerView.display();
+    
+        this.messageView.user = user;
+    
+        this.msgList.user = user;
+        this.showMessage();
+    }
+    
+    addMessage(msg) {
+        if(!this.msgList.user) {
+            console.warn('User is not authorized');
+        }
+    
+        const {text, to} = msg;
+        this.msgList.add(text, to);
+        this.showMessage();
+    }
+    
+    editMessage(idF, msg) {
+        if(this.msgList.edit(idF, msg)) {
+            this.showMessage();
+        }
+    }
+    
+    removeMessage(idF) {
+        this.msgList.remove(idF);
+        this.messageView.display(this.msgList.getPage());
+    }
+    
+    showMessage(skip = 0, top = parseInt(sessionStorage.getItem('top')), filterObj = {}) {
+        this.messageView.display(this.msgList.getPage(skip, top, filterObj));
+    }
+    
+    showUsers() {
+        this.onlineUsersView.display(this.userList.activeUsers);
+        this.offlineUsersView.display(this.userList.getOffline());
+    }
+
+    clearPage() {
+        const body = document.querySelector('body');
+        body.removeChild(document.querySelector('div.wrapper'));
+    }
+
+    start() {
+        this.chatPageView.display();
+    }
+}
+
+const chatController = new ChatController();
+chatController.start();
