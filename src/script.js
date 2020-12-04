@@ -327,23 +327,17 @@ class UserList {
 class HeaderView {
     constructor(containerId) {
         this._containerId = containerId;
-        this._user = null;
-    }
-
-    set user(user) {
-        this._user = user;
-    }
-
-    get user() {
-        return this._user;
     }
 
     display() {
+        const token = localStorage.getItem('token');
+        const user = localStorage.getItem('curentUser');
+
         const el = document.getElementById(this._containerId);
         const frm = new DocumentFragment();
         el.innerHTML = '';
 
-        if(!this._user) {
+        if(!token) {
             const newDiv = document.createElement('div');
             newDiv.classList = 'sign-body'
             
@@ -377,7 +371,7 @@ class HeaderView {
 
         const iconTitle = document.createElement('div');
         iconTitle.classList = 'curent-icon title';
-        iconTitle.innerText = this._user[0];
+        iconTitle.innerText = user[0];
         curentBody.appendChild(iconTitle);
 
         const curent = document.createElement('div');
@@ -385,15 +379,19 @@ class HeaderView {
 
         const userTitle = document.createElement('h2');
         userTitle.classList = 'title';
-        userTitle.innerHTML = this._user;
+        userTitle.innerHTML = user;
         const logOut = document.createElement('span');
         logOut.classList = 'curent-btn';
         logOut.innerText = 'Log out';
 
-        logOut.addEventListener('click', (event) => {
+        logOut.addEventListener('click', async (event) => {
+            const response = await chatApiService.logOut();
+            console.log(response);
             localStorage.setItem('curentUser', '');
+            localStorage.setItem('token', '');
+
             chatController.clearPage();
-            chatController.chatPageView.display();
+            chatController.start();
         });
 
         curent.appendChild(userTitle);
@@ -421,6 +419,7 @@ class HeaderView {
 
         //* inputs
         searchMsgInp.addEventListener('input', (event) => {
+            sessionStorage.setItem('searchMsg', searchMsgInp.value);
             if(!!searchMsgInp.value) {
                 msgCheck.checked = true;
                 searchBtn.classList.add('search-btn');
@@ -432,6 +431,7 @@ class HeaderView {
             
         });
         searchUserInp.addEventListener('input', () => {
+            sessionStorage.setItem('searchUser', searchUserInp.value);
             if(!!searchUserInp.value) {
                 userCheck.checked = true;
                 searchBtn.classList.add('search-btn');
@@ -441,6 +441,7 @@ class HeaderView {
             }
         });
         searchDateInp.addEventListener('input', () => {
+            sessionStorage.setItem('searchDate', searchDateInp.value);
             if(!!searchDateInp.value) {
                 dateCheck.checked = true;
                 searchBtn.classList.add('search-btn');
@@ -454,6 +455,7 @@ class HeaderView {
         msgCheck.addEventListener('click', () => {
             if(!msgCheck.checked) {
                 searchMsgInp.value = '';
+                sessionStorage.setItem('searchMsg', searchMsgInp.value);
                 if(!msgCheck.checked && !userCheck.checked && !dateCheck.checked) {
                     searchBtn.classList.remove('search-btn');
                 }
@@ -464,6 +466,7 @@ class HeaderView {
         userCheck.addEventListener('click', () => {
             if(!userCheck.checked) {
                 searchUserInp.value = '';
+                sessionStorage.setItem('searchUser', searchUserInp.value);
                 if(!msgCheck.checked && !userCheck.checked && !dateCheck.checked) {
                     searchBtn.classList.remove('search-btn');
                 }
@@ -474,6 +477,7 @@ class HeaderView {
         dateCheck.addEventListener('click', () => {
             if(!dateCheck.checked) {
                 searchDateInp.value = '';
+                sessionStorage.setItem('searchDate', searchDateInp.value);
                 if(!msgCheck.checked && !userCheck.checked && !dateCheck.checked) {
                     searchBtn.classList.remove('search-btn');
                 }
@@ -484,18 +488,7 @@ class HeaderView {
 
         //* SearchBtn
         searchBtn.addEventListener('click', () => {
-            const filterObj = {
-                text: searchMsgInp.value || '',
-                author: searchUserInp.value || '',
-                dateTo: ''
-            };
-
-            if(!!searchDateInp.value) {
-                filterObj.dateTo = new Date(searchDateInp.value)
-            }
-
-            console.log(filterObj);
-            chatController.showMessage(0, 10, filterObj);
+            chatController.showMessage();
         });
         if(msgCheck.checked || userCheck.checked || dateCheck.checked) {
             searchBtn.classList.add('search-btn');
@@ -596,11 +589,9 @@ class MessageView {
         this._user = null;
     }
 
-    set user(user) {
-        this._user = user;
-    }
-
     display(messages) {
+        this._user = localStorage.getItem('curentUser');
+
         const frm = new DocumentFragment();
         const el = document.getElementById(this._containerId);
         el.innerHTML = '';
@@ -693,15 +684,18 @@ class MessageView {
                 editType.style.display = ''; 
             });
             yes.addEventListener('click', (event) => {
-                const top = parseInt(sessionStorage.getItem('top'));
+                /* const top = parseInt(sessionStorage.getItem('top'));
                 if(top >= 10) {
                     sessionStorage.setItem('top', top);
-                }
+                } */
+
                 chatController.removeMessage(id);
+                chatController.showMessage();
+
+
             });
             
             edit.addEventListener('click', (event) => {
-                console.log(id);
                 msgId = id;
 
                 sendBtn.style.display = 'none';
@@ -735,7 +729,7 @@ class MessageView {
 
         editInput.addEventListener('keypress', (event) => {
             if(event.key === 'Enter') {
-                editMessage(msgId, {text: editInput.value, to: sessionStorage.getItem('to')});
+                chatController.editMessage(msgId, {text: editInput.value, to: sessionStorage.getItem('to')});
 
                 editInput.value = '';
                 editBtn.style.display = 'none';
@@ -778,8 +772,6 @@ class ChatPageView {
     }
 
     display() {
-        sessionStorage.setItem('top', 10)
-        sessionStorage.setItem('to','');
         const frm = new DocumentFragment();
         const el = document.querySelector(this._containerId);
 
@@ -787,9 +779,6 @@ class ChatPageView {
 
         el.appendChild(frm);
 
-        chatController.setCurrentUser(localStorage.getItem('curentUser'));
-
-        chatController.showUsers();
         this.events();
     }
 
@@ -914,12 +903,30 @@ class LoginPageView {
                 submit.disabled = true;
             }
         });
+        // LOGIN
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            try {
+                const response = await chatApiService.signIn(login.value, pass.value);
+                console.log(response);
+                const status = await response.status;
+                console.log(status);
+                if (status === 200) {
+                    const data = await response.json();
+                    const token = data.token;
 
-        form.addEventListener('submit', (event) => {
-            if(!chatController.signIn(login.value)) {
-                event.preventDefault();
-                errText.innerText = 'Wrong login or password';
+                    localStorage.setItem('curentUser', login.value);
+                    localStorage.setItem('token', token);
+
+                    chatController.clearPage();
+                    chatController.start();
+                } else {
+                    errText.innerText = 'Wrong login or password';
+                }
+            } catch (err) {
+                console.error("Error: ", err);
             }
+            
         });
     }
 }
@@ -1015,12 +1022,29 @@ class RegistrPageView {
                 submit.disabled = true;
             }
         });
+        // REGISTER
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const status = await chatApiService.signUp(login.value, pass.value);
 
-        form.addEventListener('submit', (event) => {
-            if(!chatController.signUp(login.value)) {
+            if (await status.status === 409) {
+                errText.innerText = 'User with such login already exists';
+            } else if (await status.status === 200) {
+                const response = await chatApiService.signIn(login.value, pass.value);
+                const data = await response.json();
+                const token = await data.token;
+
+                localStorage.setItem('curentUser', login.value);
+                localStorage.setItem('token', token);
+
+                chatController.clearPage();
+                chatController.start();
+            }
+
+            /* if (!status) {
                 event.preventDefault();
                 errText.innerText = 'User with such login already exists';
-            }
+            } */
         });
     }
 }
@@ -1041,7 +1065,8 @@ class ChatController {
         //* Message List n UserList
         this.msgList = new MessageList(messages);
 
-        this.userList = new UserList(['Dima', 'ZhenyaZh', 'ZhenyaH', 'Sasha', 'Pasha'], ['Dima', 'ZhenyaZh']);
+        /* this.userList = chatApiService.getUsers(); */
+        this.userList = new UserList([],[]);
 
         //* View
         this.headerView = new HeaderView('curentUser');
@@ -1070,14 +1095,33 @@ class ChatController {
         return false;
     }
     
-    signUp(login) {
-        if(!!this.userList) {
+    signUp(login, pass) {
+        console.log('Try to register...');
+
+        (async () => {
+            console.log(await chatApiService.signUp(login, pass));
+            return status.status;
+        })()
+        /* try {
+            console.log('Try to register...');
+            const response = await chatApiService.signUp(login, pass);
+            debugger;
+            console.log(response.status);
+
+            setTimeout(() => console.log('TimeOut'), 5000); 
+        } catch(err) {
+            console.error("Error: ", err);
+        } */
+        
+
+        //const result = await chatApiService.signUp(login, pass);
+
+        /* if(!!this.userList) {
             for(let user of this.userList.users) {
                 if(user === login) {
                     return false;
                 }
             } 
-            debugger;
     
             this.userList.users.push(login);
             localStorage.setItem('userList', JSON.stringify(this.userList));
@@ -1087,7 +1131,7 @@ class ChatController {
             this.chatPageView.display();
     
             return true;
-        }
+        } */
     }
 
     setCurrentUser(user) {
@@ -1100,48 +1144,273 @@ class ChatController {
         this.showMessage();
     }
     
-    addMessage(msg) {
-        if(!this.msgList.user) {
-            console.warn('User is not authorized');
-        }
-    
+    async addMessage(msg) {
         const {text, to} = msg;
-        this.msgList.add(text, to);
-        this.showMessage();
+        
+        try {
+            const response = await chatApiService.postMessage(text, to);
+            this.showMessage();
+        } catch(err) {
+            console.error("Error: ", err);
+        }
+        
     }
     
-    editMessage(idF, msg) {
-        if(this.msgList.edit(idF, msg)) {
+    async editMessage(idF, msg) {
+        const {text, to} = msg;
+
+        try {
+            const response = await chatApiService.putMessage(idF, text, to);
             this.showMessage();
+        } catch(err) {
+            console.error("Error: ", err);
         }
     }
     
-    removeMessage(idF) {
-        this.msgList.remove(idF);
-        this.messageView.display(this.msgList.getPage());
+    async removeMessage(idF) {
+        try {
+            const response = await chatApiService.delMessage(idF);
+            this.showMessage();
+        } catch(err) {
+            console.error("Error: ", err);
+        }
     }
     
-    showMessage(skip = 0, top = parseInt(sessionStorage.getItem('top')), filterObj = {}) {
-        this.messageView.display(this.msgList.getPage(skip, top, filterObj));
+    async showMessage() {
+        try {
+            const response = await chatApiService.getMessages();
+            const msgs = await response.json();
+            this.messageView.display(msgs);
+        } catch (err) {
+            console.log(error);
+        }
     }
-    
+  
     showUsers() {
         this.onlineUsersView.display(this.userList.activeUsers);
         this.offlineUsersView.display(this.userList.getOffline());
     }
 
     clearPage() {
+        clearInterval(window.msgInterval);                
+        clearInterval(window.usersInterval);                
+
         const body = document.querySelector('body');
         body.removeChild(document.querySelector('div.wrapper'));
     }
 
-    start() {
+    async start() {
+        this.chatPageView.display();
+
         sessionStorage.setItem('skip', 0);
         sessionStorage.setItem('top', 10);
+
+        sessionStorage.setItem('searchMsg', '');
+        sessionStorage.setItem('searchUser', '');
+        sessionStorage.setItem('searchDate', '');
         
-        this.chatPageView.display();
+        try {
+
+            //USERS
+            const localLoadUsers = async () => {
+                try {
+                    this.userList = await chatApiService.getUsers();
+                    await this.showUsers();
+                } catch(err) {
+                    console.error("Error: ", err);
+                }
+            }
+
+            localLoadUsers();
+            window.usersInterval = setInterval(() => {
+                localLoadUsers();
+            }, 40 * 1000);
+
+
+            //Curent user
+            this.headerView.display();
+
+            //Messages
+            this.showMessage();
+            window.msgInterval = setInterval(() => {
+                this.showMessage();
+            }, 10 * 1000);
+        } catch(e) {
+            console.error("Error :", e);
+        }
+        
     }
 }
 
+class ChatApiService {
+    constructor(host) {
+        this._host = host;
+    }
+
+    _getHeaders() {
+        const myHeaders = new Headers();
+        const data = 'Bearer ' + localStorage.getItem('token') || '';
+        myHeaders.append("Authorization", data);
+
+        return myHeaders;
+    }
+    //Users
+    getUsers() {
+        const link = this._host + 'users';
+
+        const newUserList = [];
+        const newActiveList = [];
+
+        var myHeaders = this._getHeaders();
+
+        var requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
+
+        return fetch(link, requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                for (const user of result) {
+                    newUserList.push(user.name);
+                    if (user.isActiveUser) {
+                        newActiveList.push(user.name);
+                    }
+                }
+                return new UserList(newUserList, newActiveList);
+            })
+            .catch(error => console.log('Error', error));
+    }
+
+    //Accaunt
+    async logOut() {
+        const link = this._host + 'auth/logout'
+        var myHeaders = this._getHeaders();
+
+        console.log(localStorage.getItem('curentUser'));
+        console.log(localStorage.getItem('token'));
+
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
+
+        return fetch(link, requestOptions);
+        /* return fetch(link, requestOptions); */
+    }
+
+    async signIn(name, pass) {
+        const link = this._host + 'auth/login';
+
+        var formdata = new FormData();
+        formdata.append("name", `${name}`);
+        formdata.append("pass", `${pass}`);
+
+        var requestOptions = {
+            method: 'POST',
+            body: formdata,
+            redirect: 'follow'
+        };
+        
+        try {
+            return await fetch(link, requestOptions);
+        } catch (err) {
+            console.error("Error: ", err);
+        }
+        
+    }
+
+    async signUp(name, pass) {
+        const link = this._host + 'auth/register';
+        var formdata = new FormData();
+        formdata.append("name", `${name}`);
+        formdata.append("pass", `${pass}`);     
+
+        var requestOptions = {
+            method: 'POST',
+            body: formdata,
+            redirect: 'follow'
+        };
+
+        return await fetch(link, requestOptions);
+    }
+
+    //Messages
+    async getMessages() {
+        let link = `${this._host}messages?skip=${sessionStorage.getItem('skip')}&top=${sessionStorage.getItem('top')}`;
+        link += `&author=${sessionStorage.getItem('searchUser')}&text=${sessionStorage.getItem('searchMsg')}&dateTo=${sessionStorage.getItem('searchDate').split('-').join()}`;
+        var myHeaders = this._getHeaders();
+
+        var requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
+
+        try {
+            return await fetch(link, requestOptions)
+        } catch(err) {
+            console.error("Error: ", err);
+        }
+        
+    }
+
+    async postMessage(text, to) {
+        var myHeaders = this._getHeaders();
+        myHeaders.append("Content-Type", "application/json");
+
+        var raw = JSON.stringify({"text":text,"isPersonal":to ? true : false, "to": to ? to : '',"author":localStorage.getItem('curentUser')});
+
+        var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+        };
+
+        return fetch("https://jslabdb.datamola.com/messages", requestOptions)
+        .then(response => response.text())
+        .then(result => console.log(result))
+        .catch(error => console.log('error', error));
+    }
+
+    async delMessage(id) {
+        const link = this._host + "messages/" + id;
+        var myHeaders = this._getHeaders();
+
+        var requestOptions = {
+            method: 'DELETE',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
+
+        fetch(link, requestOptions)
+        .then(response => response.text())
+        .then(result => console.log(result))
+        .catch(error => console.log('error', error));
+    }
+
+    async putMessage(id, text, to = '') {
+        const link = this._host + 'messages/' + id;
+        
+        var myHeaders = this._getHeaders();
+        myHeaders.append("Content-Type", "application/json");
+
+        var raw = JSON.stringify({"text":text,"isPersonal":to ? true : false, "to":to ? to : ''});
+
+        var requestOptions = {
+            method: 'PUT',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+
+        return await fetch(link, requestOptions);
+    }
+}
+
+const chatApiService = new ChatApiService("https://jslabdb.datamola.com/");
 const chatController = new ChatController();
 chatController.start();
