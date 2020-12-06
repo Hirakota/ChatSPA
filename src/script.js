@@ -532,6 +532,7 @@ class OnlineUsersView {
 
         onlineUsers.addEventListener('click', (event) => {
             const user = event.target.closest('div.user');
+            
             const to = user.querySelector('.user-name').innerText;
             const isActiveUser = onlineUsers.querySelector('div.user-active');
 
@@ -1272,6 +1273,15 @@ class ChatController {
         
         try {
 
+            //Curent user
+            this.headerView.display();
+
+            //Messages
+            this.showMessage();
+            window.msgInterval = setInterval(() => {
+                this.showMessage();
+            }, 10 * 1000);
+
             //USERS
             const localLoadUsers = async () => {
                 try {
@@ -1286,16 +1296,6 @@ class ChatController {
             window.usersInterval = setInterval(() => {
                 localLoadUsers();
             }, 40 * 1000);
-
-
-            //Curent user
-            this.headerView.display();
-
-            //Messages
-            this.showMessage();
-            window.msgInterval = setInterval(() => {
-                this.showMessage();
-            }, 10 * 1000);
         } catch(e) {
             console.error("Error :", e);
             this.errorPage();
@@ -1342,7 +1342,7 @@ class ChatApiService {
                 for (const user of result) {
                     if(!!user.name) {
                         newUserList.push(user.name);
-                        if (user.isActiveUser) {
+                        if (user.isActive) {
                             newActiveList.push(user.name);
                         }
                     }
