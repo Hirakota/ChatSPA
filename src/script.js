@@ -386,7 +386,6 @@ class HeaderView {
 
         logOut.addEventListener('click', async (event) => {
             const response = await chatApiService.logOut();
-            console.log(response);
             localStorage.setItem('curentUser', '');
             localStorage.setItem('token', '');
 
@@ -592,6 +591,12 @@ class MessageView {
     display(messages) {
         this._user = localStorage.getItem('curentUser');
 
+        //typing 
+        /* const typing = document.querySelector('div.typing');
+        typing.innerHTML = '';
+        const typingBody = document.getElementById('typing-template').content.cloneNode(true);
+        typing.appendChild(typingBody); */
+
         const frm = new DocumentFragment();
         const el = document.getElementById(this._containerId);
         el.innerHTML = '';
@@ -642,11 +647,12 @@ class MessageView {
         el.appendChild(frm);
         
         const loadNew = document.getElementById('loadNew-template').content.cloneNode(true);
-        console.log(loadNew);
         if(baseHeight === el.scrollHeight) {
             loadNew.querySelector(`.load-new`).classList.add('load-new-absolute');
         }
         el.appendChild(loadNew);
+
+        el.scrollTop = sessionStorage.getItem('scrollTop');
 
         this._events();
     }
@@ -656,12 +662,14 @@ class MessageView {
 
         let msgId;
         const typingBody = document.querySelector('div.typing-body');
-        const cancelEdit = typingBody.querySelector('div.cancel-edit');
+        
         const input = document.getElementById('msgInp');
-        const editInput = document.getElementById('editMsgInp');
         const sendBtn = document.getElementById('sendMsg');
-        const editBtn = document.getElementById('editBtn');
 
+        const editInput = document.getElementById('editMsgInp');
+        const cancelEdit = typingBody.querySelector('div.cancel-edit');
+        const editBtn = document.getElementById('editBtn');
+        
         const messages = el.querySelectorAll('div.my-message');
 
         for(const message of messages) {
@@ -691,12 +699,11 @@ class MessageView {
 
                 chatController.removeMessage(id);
                 chatController.showMessage();
-
-
             });
             
             edit.addEventListener('click', (event) => {
-                msgId = id;
+                msgId = message.parentNode.id;
+                sessionStorage.setItem('toEditId', msgId);
 
                 sendBtn.style.display = 'none';
                 editBtn.style.display = '';
@@ -713,47 +720,15 @@ class MessageView {
             });
         }
 
-        editBtn.addEventListener('click', (event) => {
-            chatController.editMessage(msgId, {text: editInput.value, to: sessionStorage.getItem('to')});
+        /* function saveScroll() {
+            console.log(el.scrollTop);
+            sessionStorage.setItem('scrollTop', el.scrollTop);
+        }
 
-            editInput.value = '';
-            editBtn.style.display = 'none';
-            sendBtn.style.display = '';
+        el.removeEventListener('scroll', saveScroll);
 
-            editInput.style.display = 'none';
-            input.style.display = '';
-
-            typingBody.classList.remove('typing-body-edit');
-            cancelEdit.style.display = 'none';
-        });
-
-        editInput.addEventListener('keypress', (event) => {
-            if(event.key === 'Enter') {
-                chatController.editMessage(msgId, {text: editInput.value, to: sessionStorage.getItem('to')});
-
-                editInput.value = '';
-                editBtn.style.display = 'none';
-                sendBtn.style.display = '';
-    
-                editInput.style.display = 'none';
-                input.style.display = '';
-    
-                typingBody.classList.remove('typing-body-edit');
-                cancelEdit.style.display = 'none';
-            }
-        });
-
-        cancelEdit.addEventListener('click', (event) => {
-            editInput.value = '';
-            editBtn.style.display = 'none';
-            sendBtn.style.display = '';
-    
-            editInput.style.display = 'none';
-            input.style.display = '';
-    
-            typingBody.classList.remove('typing-body-edit');
-            cancelEdit.style.display = 'none';
-        });
+        el.scrollTop = parseInt(sessionStorage.getItem('scrollTop'));
+        el.addEventListener('scroll', saveScroll); */
 
         const loadNew = document.querySelector('div.load-new');
         loadNew.addEventListener('click', (event) => {
@@ -765,6 +740,28 @@ class MessageView {
     }
 }
 //* Pages View 
+class ErrorPageView {
+    constructor() {
+        this._containerId = 'body';
+        this._pageFrm = 'error-page';
+    }
+
+    display() {
+        const frm = new DocumentFragment();
+        const el = document.querySelector(this._containerId);
+
+        frm.appendChild(document.getElementById(this._pageFrm).content.cloneNode(true));
+
+        el.appendChild(frm);
+
+        const errBtn = document.getElementById('errBtn');
+
+        errBtn.addEventListener('click', async () => {
+            chatController.clearPage();
+            chatController.start();
+        });
+    }
+}
 class ChatPageView {
     constructor() {
         this._containerId = 'body';
@@ -779,20 +776,35 @@ class ChatPageView {
 
         el.appendChild(frm);
 
-        this.events();
+        const msgList = document.getElementById('messageList');
+
+        msgList.addEventListener('scroll', () => {
+            sessionStorage.setItem('scrollTop', msgList.scrollTop);
+        });
+
+        //typing 
+        const typing = document.querySelector('div.typing');
+        const typingBody = document.getElementById('typing-template').content.cloneNode(true);
+        typing.appendChild(typingBody);
+        /* this.typing(); */
+        this._events();
     }
 
-    events() {
+    _events() {
+        const typingBody = document.querySelector('div.typing-body');
+        
         const input = document.getElementById('msgInp');
         const sendBtn = document.getElementById('sendMsg');
 
-        const user = localStorage.getItem('curentUser');
-        if(!user) {
-            input.placeholder = 'You should register before send messages';
-            input.disabled = true;
-            sendBtn.disabled = true;
+        const editInput = document.getElementById('editMsgInp');
+        const cancelEdit = typingBody.querySelector('div.cancel-edit');
+        const editBtn = document.getElementById('editBtn');
+
+        const id = () => {
+            return sessionStorage.getItem('toEditId');
         }
 
+        //msg send
         input.addEventListener('keypress', (event) => {
             const to = sessionStorage.getItem('to');
             if(event.key === 'Enter') {
@@ -830,6 +842,49 @@ class ChatPageView {
 
                 input.value = '';
             }
+        });
+
+        //msg edit
+        editBtn.addEventListener('click', (event) => {
+            chatController.editMessage(id(), {text: editInput.value, to: sessionStorage.getItem('to')});
+
+            editInput.value = '';
+            editBtn.style.display = 'none';
+            sendBtn.style.display = '';
+
+            editInput.style.display = 'none';
+            input.style.display = '';
+
+            typingBody.classList.remove('typing-body-edit');
+            cancelEdit.style.display = 'none';
+        });
+
+        editInput.addEventListener('keypress', (event) => {
+            if(event.key === 'Enter') {
+                chatController.editMessage(id(), {text: editInput.value, to: sessionStorage.getItem('to')});
+
+                editInput.value = '';
+                editBtn.style.display = 'none';
+                sendBtn.style.display = '';
+    
+                editInput.style.display = 'none';
+                input.style.display = '';
+    
+                typingBody.classList.remove('typing-body-edit');
+                cancelEdit.style.display = 'none';
+            }
+        });
+
+        cancelEdit.addEventListener('click', (event) => {
+            editInput.value = '';
+            editBtn.style.display = 'none';
+            sendBtn.style.display = '';
+    
+            editInput.style.display = 'none';
+            input.style.display = '';
+    
+            typingBody.classList.remove('typing-body-edit');
+            cancelEdit.style.display = 'none';
         });
     }
 }
@@ -908,9 +963,7 @@ class LoginPageView {
             event.preventDefault();
             try {
                 const response = await chatApiService.signIn(login.value, pass.value);
-                console.log(response);
                 const status = await response.status;
-                console.log(status);
                 if (status === 200) {
                     const data = await response.json();
                     const token = data.token;
@@ -920,9 +973,17 @@ class LoginPageView {
 
                     chatController.clearPage();
                     chatController.start();
+                } else if(status === 401) {
+                    login.focus();
+
+                    login.classList.remove('form-input-success');
+                    login.classList.add('form-input-wrong');
+
+                    pass.classList.remove('form-input-success');
+                    pass.classList.add('form-input-wrong');
                 } else {
                     errText.innerText = 'Wrong login or password';
-                }
+                } 
             } catch (err) {
                 console.error("Error: ", err);
             }
@@ -1028,7 +1089,7 @@ class RegistrPageView {
             const status = await chatApiService.signUp(login.value, pass.value);
 
             if (await status.status === 409) {
-                errText.innerText = 'User with such login already exists';
+                errText.innerText = 'User with such login already exists, \n try to sing in.';
             } else if (await status.status === 200) {
                 const response = await chatApiService.signIn(login.value, pass.value);
                 const data = await response.json();
@@ -1078,6 +1139,7 @@ class ChatController {
         this.chatPageView = new ChatPageView();
         this.loginPageView = new LoginPageView();
         this.registrPageView = new RegistrPageView();
+        this.errorPageView = new ErrorPageView();
     }
 
     signIn(login) {
@@ -1158,7 +1220,6 @@ class ChatController {
     
     async editMessage(idF, msg) {
         const {text, to} = msg;
-
         try {
             const response = await chatApiService.putMessage(idF, text, to);
             this.showMessage();
@@ -1215,9 +1276,9 @@ class ChatController {
             const localLoadUsers = async () => {
                 try {
                     this.userList = await chatApiService.getUsers();
-                    await this.showUsers();
+                    this.showUsers();
                 } catch(err) {
-                    console.error("Error: ", err);
+                    console.error("Load users ERROR: ", err);
                 }
             }
 
@@ -1237,8 +1298,14 @@ class ChatController {
             }, 10 * 1000);
         } catch(e) {
             console.error("Error :", e);
+            this.errorPage();
         }
         
+    }
+
+    errorPage() {
+        this.clearPage();
+        this.errorPage.display();
     }
 }
 
@@ -1273,9 +1340,11 @@ class ChatApiService {
             .then(response => response.json())
             .then(result => {
                 for (const user of result) {
-                    newUserList.push(user.name);
-                    if (user.isActiveUser) {
-                        newActiveList.push(user.name);
+                    if(!!user.name) {
+                        newUserList.push(user.name);
+                        if (user.isActiveUser) {
+                            newActiveList.push(user.name);
+                        }
                     }
                 }
                 return new UserList(newUserList, newActiveList);
@@ -1287,9 +1356,6 @@ class ChatApiService {
     async logOut() {
         const link = this._host + 'auth/logout'
         var myHeaders = this._getHeaders();
-
-        console.log(localStorage.getItem('curentUser'));
-        console.log(localStorage.getItem('token'));
 
         var requestOptions = {
             method: 'POST',
