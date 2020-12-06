@@ -514,6 +514,11 @@ class OnlineUsersView {
         const userTpl = document.getElementById('user-template');
         for (const user of userList) {
             const us = userTpl.content.cloneNode(true);
+
+            if(user === sessionStorage.getItem('to')) {
+                us.querySelector('div.user').classList.add('user-active');
+            }
+
             us.querySelector('.user').classList.add('user-online');
             us.querySelector('.user-icon').classList += 'online';
             us.querySelector('.user-icon').textContent = user[0];
@@ -523,32 +528,6 @@ class OnlineUsersView {
         }
 
         el.appendChild(frm);
-        this.events();
-    }
-
-    events() {
-        const onlineUsers = document.getElementById(this._containerId);
-        const userArr = onlineUsers.querySelectorAll('div.user');
-
-        onlineUsers.addEventListener('click', (event) => {
-            const user = event.target.closest('div.user');
-            
-            const to = user.querySelector('.user-name').innerText;
-            const isActiveUser = onlineUsers.querySelector('div.user-active');
-
-            if(!!isActiveUser) {
-                isActiveUser.classList.remove('user-active');
-                sessionStorage.setItem('to', '');
-            }
-
-            if(isActiveUser === user) {
-                user.classList.remove('user-active');
-                sessionStorage.setItem('to', '');
-            } else {
-                user.classList.add('user-active');
-                sessionStorage.setItem('to', to);
-            }
-        });
     }
 }
 
@@ -721,16 +700,6 @@ class MessageView {
             });
         }
 
-        /* function saveScroll() {
-            console.log(el.scrollTop);
-            sessionStorage.setItem('scrollTop', el.scrollTop);
-        }
-
-        el.removeEventListener('scroll', saveScroll);
-
-        el.scrollTop = parseInt(sessionStorage.getItem('scrollTop'));
-        el.addEventListener('scroll', saveScroll); */
-
         const loadNew = document.querySelector('div.load-new');
         loadNew.addEventListener('click', (event) => {
             localStorage.setItem('scrollTop', el.scrollTop);
@@ -792,6 +761,31 @@ class ChatPageView {
     }
 
     _events() {
+        //ONLINE USERS
+        const onlineUsers = document.getElementById('onlineList');
+
+        onlineUsers.addEventListener('click', (event) => {
+            const user = event.target.closest('div.user');
+            
+            const to = user.querySelector('.user-name').innerText;
+            const isActiveUser = onlineUsers.querySelector('div.user-active');
+
+            if(!!isActiveUser) {
+                isActiveUser.classList.remove('user-active');
+                sessionStorage.setItem('to', '');
+            }
+
+            if(isActiveUser === user) {
+                user.classList.remove('user-active');
+                sessionStorage.setItem('to', '');
+            } else {
+                user.classList.add('user-active');
+                sessionStorage.setItem('to', to);
+            }
+        });
+
+
+        //SEND AND EDIT MSG
         const typingBody = document.querySelector('div.typing-body');
         
         const input = document.getElementById('msgInp');
@@ -1243,8 +1237,10 @@ class ChatController {
             const response = await chatApiService.getMessages();
             const msgs = await response.json();
             this.messageView.display(msgs);
+
         } catch (err) {
-            console.log(error);
+            console.log("Error in showMessage: ", err);
+            this.errorPage();
         }
     }
   
@@ -1305,7 +1301,7 @@ class ChatController {
 
     errorPage() {
         this.clearPage();
-        this.errorPage.display();
+        this.errorPageView.display();
     }
 }
 
@@ -1418,7 +1414,7 @@ class ChatApiService {
         try {
             return await fetch(link, requestOptions)
         } catch(err) {
-            console.error("Error: ", err);
+            console.error("Error in GET messages: ", err);
         }
         
     }
