@@ -410,8 +410,8 @@ body {
 .user-icon {
     display: flex;
 
-    width: 3rem;
-    height: 3rem;
+    min-width: 3rem;
+    min-height: 3rem;
 
     justify-content: center;
     align-items: center;
@@ -806,6 +806,69 @@ body {
 .error-text {
     margin-top: .5rem;
     color: #ac1233;
+}
+
+.error-wrapper {
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-content: center;
+
+    justify-items: center;
+    align-items: center;
+}
+.error-body {
+    display: grid;
+    grid-template-columns: 15rem 35rem;
+    grid-column-gap: 2rem;
+
+    justify-content: center;
+    align-items: center;
+
+    width: 70rem;
+    max-width: 70rem;
+}
+.error-icon {
+    color: var(--color-1);
+    font-size: 15rem;
+}
+.error-info {
+    color: var(--dark-grey);
+    font-size: 3rem;
+}
+
+.error-info h1{
+    color: var(--color-2);
+}
+
+.error-btn { 
+    margin-top: 2rem;
+    cursor: pointer;
+
+    color: white;
+    font-weight: bold;
+
+    width: 15rem;
+    height: 3rem;
+
+    background-color: var(--color-1);
+
+    border: none;
+    border-radius: .5rem;
+
+    transition: .4s ease-in-out;
+}
+
+.error-btn:hover {
+    background-color: var(--color-2);
+}
+
+.error-btn:focus {
+    outline: none;
+    background-color: var(--color-2);
 }
 
 @media screen and (max-width: 65rem) {

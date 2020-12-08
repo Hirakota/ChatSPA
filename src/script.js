@@ -327,23 +327,17 @@ class UserList {
 class HeaderView {
     constructor(containerId) {
         this._containerId = containerId;
-        this._user = null;
-    }
-
-    set user(user) {
-        this._user = user;
-    }
-
-    get user() {
-        return this._user;
     }
 
     display() {
+        const token = localStorage.getItem('token');
+        const user = localStorage.getItem('curentUser');
+
         const el = document.getElementById(this._containerId);
         const frm = new DocumentFragment();
         el.innerHTML = '';
 
-        if(!this._user) {
+        if(!token) {
             const newDiv = document.createElement('div');
             newDiv.classList = 'sign-body'
             
@@ -377,7 +371,7 @@ class HeaderView {
 
         const iconTitle = document.createElement('div');
         iconTitle.classList = 'curent-icon title';
-        iconTitle.innerText = this._user[0];
+        iconTitle.innerText = user[0];
         curentBody.appendChild(iconTitle);
 
         const curent = document.createElement('div');
@@ -385,15 +379,18 @@ class HeaderView {
 
         const userTitle = document.createElement('h2');
         userTitle.classList = 'title';
-        userTitle.innerHTML = this._user;
+        userTitle.innerHTML = user;
         const logOut = document.createElement('span');
         logOut.classList = 'curent-btn';
         logOut.innerText = 'Log out';
 
-        logOut.addEventListener('click', (event) => {
+        logOut.addEventListener('click', async (event) => {
+            const response = await chatApiService.logOut();
             localStorage.setItem('curentUser', '');
+            localStorage.setItem('token', '');
+
             chatController.clearPage();
-            chatController.chatPageView.display();
+            chatController.start();
         });
 
         curent.appendChild(userTitle);
@@ -421,6 +418,7 @@ class HeaderView {
 
         //* inputs
         searchMsgInp.addEventListener('input', (event) => {
+            sessionStorage.setItem('searchMsg', searchMsgInp.value);
             if(!!searchMsgInp.value) {
                 msgCheck.checked = true;
                 searchBtn.classList.add('search-btn');
@@ -432,6 +430,7 @@ class HeaderView {
             
         });
         searchUserInp.addEventListener('input', () => {
+            sessionStorage.setItem('searchUser', searchUserInp.value);
             if(!!searchUserInp.value) {
                 userCheck.checked = true;
                 searchBtn.classList.add('search-btn');
@@ -441,6 +440,7 @@ class HeaderView {
             }
         });
         searchDateInp.addEventListener('input', () => {
+            sessionStorage.setItem('searchDate', searchDateInp.value);
             if(!!searchDateInp.value) {
                 dateCheck.checked = true;
                 searchBtn.classList.add('search-btn');
@@ -454,6 +454,7 @@ class HeaderView {
         msgCheck.addEventListener('click', () => {
             if(!msgCheck.checked) {
                 searchMsgInp.value = '';
+                sessionStorage.setItem('searchMsg', searchMsgInp.value);
                 if(!msgCheck.checked && !userCheck.checked && !dateCheck.checked) {
                     searchBtn.classList.remove('search-btn');
                 }
@@ -464,6 +465,7 @@ class HeaderView {
         userCheck.addEventListener('click', () => {
             if(!userCheck.checked) {
                 searchUserInp.value = '';
+                sessionStorage.setItem('searchUser', searchUserInp.value);
                 if(!msgCheck.checked && !userCheck.checked && !dateCheck.checked) {
                     searchBtn.classList.remove('search-btn');
                 }
@@ -474,6 +476,7 @@ class HeaderView {
         dateCheck.addEventListener('click', () => {
             if(!dateCheck.checked) {
                 searchDateInp.value = '';
+                sessionStorage.setItem('searchDate', searchDateInp.value);
                 if(!msgCheck.checked && !userCheck.checked && !dateCheck.checked) {
                     searchBtn.classList.remove('search-btn');
                 }
@@ -484,18 +487,7 @@ class HeaderView {
 
         //* SearchBtn
         searchBtn.addEventListener('click', () => {
-            const filterObj = {
-                text: searchMsgInp.value || '',
-                author: searchUserInp.value || '',
-                dateTo: ''
-            };
-
-            if(!!searchDateInp.value) {
-                filterObj.dateTo = new Date(searchDateInp.value)
-            }
-
-            console.log(filterObj);
-            chatController.showMessage(0, 10, filterObj);
+            chatController.showMessage();
         });
         if(msgCheck.checked || userCheck.checked || dateCheck.checked) {
             searchBtn.classList.add('search-btn');
@@ -522,6 +514,11 @@ class OnlineUsersView {
         const userTpl = document.getElementById('user-template');
         for (const user of userList) {
             const us = userTpl.content.cloneNode(true);
+
+            if(user === sessionStorage.getItem('to')) {
+                us.querySelector('div.user').classList.add('user-active');
+            }
+
             us.querySelector('.user').classList.add('user-online');
             us.querySelector('.user-icon').classList += 'online';
             us.querySelector('.user-icon').textContent = user[0];
@@ -531,31 +528,6 @@ class OnlineUsersView {
         }
 
         el.appendChild(frm);
-        this.events();
-    }
-
-    events() {
-        const onlineUsers = document.getElementById(this._containerId);
-        const userArr = onlineUsers.querySelectorAll('div.user');
-
-        onlineUsers.addEventListener('click', (event) => {
-            const user = event.target.closest('div.user');
-            const to = user.querySelector('.user-name').innerText;
-            const isActiveUser = onlineUsers.querySelector('div.user-active');
-
-            if(!!isActiveUser) {
-                isActiveUser.classList.remove('user-active');
-                sessionStorage.setItem('to', '');
-            }
-
-            if(isActiveUser === user) {
-                user.classList.remove('user-active');
-                sessionStorage.setItem('to', '');
-            } else {
-                user.classList.add('user-active');
-                sessionStorage.setItem('to', to);
-            }
-        });
     }
 }
 
@@ -596,11 +568,15 @@ class MessageView {
         this._user = null;
     }
 
-    set user(user) {
-        this._user = user;
-    }
-
     display(messages) {
+        this._user = localStorage.getItem('curentUser');
+
+        //typing 
+        /* const typing = document.querySelector('div.typing');
+        typing.innerHTML = '';
+        const typingBody = document.getElementById('typing-template').content.cloneNode(true);
+        typing.appendChild(typingBody); */
+
         const frm = new DocumentFragment();
         const el = document.getElementById(this._containerId);
         el.innerHTML = '';
@@ -651,11 +627,12 @@ class MessageView {
         el.appendChild(frm);
         
         const loadNew = document.getElementById('loadNew-template').content.cloneNode(true);
-        console.log(loadNew);
         if(baseHeight === el.scrollHeight) {
             loadNew.querySelector(`.load-new`).classList.add('load-new-absolute');
         }
         el.appendChild(loadNew);
+
+        el.scrollTop = sessionStorage.getItem('scrollTop');
 
         this._events();
     }
@@ -665,12 +642,14 @@ class MessageView {
 
         let msgId;
         const typingBody = document.querySelector('div.typing-body');
-        const cancelEdit = typingBody.querySelector('div.cancel-edit');
+        
         const input = document.getElementById('msgInp');
-        const editInput = document.getElementById('editMsgInp');
         const sendBtn = document.getElementById('sendMsg');
-        const editBtn = document.getElementById('editBtn');
 
+        const editInput = document.getElementById('editMsgInp');
+        const cancelEdit = typingBody.querySelector('div.cancel-edit');
+        const editBtn = document.getElementById('editBtn');
+        
         const messages = el.querySelectorAll('div.my-message');
 
         for(const message of messages) {
@@ -693,16 +672,18 @@ class MessageView {
                 editType.style.display = ''; 
             });
             yes.addEventListener('click', (event) => {
-                const top = parseInt(sessionStorage.getItem('top'));
+                /* const top = parseInt(sessionStorage.getItem('top'));
                 if(top >= 10) {
                     sessionStorage.setItem('top', top);
-                }
+                } */
+
                 chatController.removeMessage(id);
+                chatController.showMessage();
             });
             
             edit.addEventListener('click', (event) => {
-                console.log(id);
-                msgId = id;
+                msgId = message.parentNode.id;
+                sessionStorage.setItem('toEditId', msgId);
 
                 sendBtn.style.display = 'none';
                 editBtn.style.display = '';
@@ -719,48 +700,6 @@ class MessageView {
             });
         }
 
-        editBtn.addEventListener('click', (event) => {
-            chatController.editMessage(msgId, {text: editInput.value, to: sessionStorage.getItem('to')});
-
-            editInput.value = '';
-            editBtn.style.display = 'none';
-            sendBtn.style.display = '';
-
-            editInput.style.display = 'none';
-            input.style.display = '';
-
-            typingBody.classList.remove('typing-body-edit');
-            cancelEdit.style.display = 'none';
-        });
-
-        editInput.addEventListener('keypress', (event) => {
-            if(event.key === 'Enter') {
-                editMessage(msgId, {text: editInput.value, to: sessionStorage.getItem('to')});
-
-                editInput.value = '';
-                editBtn.style.display = 'none';
-                sendBtn.style.display = '';
-    
-                editInput.style.display = 'none';
-                input.style.display = '';
-    
-                typingBody.classList.remove('typing-body-edit');
-                cancelEdit.style.display = 'none';
-            }
-        });
-
-        cancelEdit.addEventListener('click', (event) => {
-            editInput.value = '';
-            editBtn.style.display = 'none';
-            sendBtn.style.display = '';
-    
-            editInput.style.display = 'none';
-            input.style.display = '';
-    
-            typingBody.classList.remove('typing-body-edit');
-            cancelEdit.style.display = 'none';
-        });
-
         const loadNew = document.querySelector('div.load-new');
         loadNew.addEventListener('click', (event) => {
             localStorage.setItem('scrollTop', el.scrollTop);
@@ -771,15 +710,13 @@ class MessageView {
     }
 }
 //* Pages View 
-class ChatPageView {
+class ErrorPageView {
     constructor() {
         this._containerId = 'body';
-        this._pageFrm = 'chat-page';
+        this._pageFrm = 'error-page';
     }
 
     display() {
-        sessionStorage.setItem('top', 10)
-        sessionStorage.setItem('to','');
         const frm = new DocumentFragment();
         const el = document.querySelector(this._containerId);
 
@@ -787,23 +724,82 @@ class ChatPageView {
 
         el.appendChild(frm);
 
-        chatController.setCurrentUser(localStorage.getItem('curentUser'));
+        const errBtn = document.getElementById('errBtn');
 
-        chatController.showUsers();
-        this.events();
+        errBtn.addEventListener('click', async () => {
+            chatController.clearPage();
+            chatController.start();
+        });
+    }
+}
+class ChatPageView {
+    constructor() {
+        this._containerId = 'body';
+        this._pageFrm = 'chat-page';
     }
 
-    events() {
+    display() {
+        const frm = new DocumentFragment();
+        const el = document.querySelector(this._containerId);
+
+        frm.appendChild(document.getElementById(this._pageFrm).content.cloneNode(true));
+
+        el.appendChild(frm);
+
+        const msgList = document.getElementById('messageList');
+
+        msgList.addEventListener('scroll', () => {
+            sessionStorage.setItem('scrollTop', msgList.scrollTop);
+        });
+
+        //typing 
+        const typing = document.querySelector('div.typing');
+        const typingBody = document.getElementById('typing-template').content.cloneNode(true);
+        typing.appendChild(typingBody);
+        /* this.typing(); */
+        this._events();
+    }
+
+    _events() {
+        //ONLINE USERS
+        const onlineUsers = document.getElementById('onlineList');
+
+        onlineUsers.addEventListener('click', (event) => {
+            const user = event.target.closest('div.user');
+            
+            const to = user.querySelector('.user-name').innerText;
+            const isActiveUser = onlineUsers.querySelector('div.user-active');
+
+            if(!!isActiveUser) {
+                isActiveUser.classList.remove('user-active');
+                sessionStorage.setItem('to', '');
+            }
+
+            if(isActiveUser === user) {
+                user.classList.remove('user-active');
+                sessionStorage.setItem('to', '');
+            } else {
+                user.classList.add('user-active');
+                sessionStorage.setItem('to', to);
+            }
+        });
+
+
+        //SEND AND EDIT MSG
+        const typingBody = document.querySelector('div.typing-body');
+        
         const input = document.getElementById('msgInp');
         const sendBtn = document.getElementById('sendMsg');
 
-        const user = localStorage.getItem('curentUser');
-        if(!user) {
-            input.placeholder = 'You should register before send messages';
-            input.disabled = true;
-            sendBtn.disabled = true;
+        const editInput = document.getElementById('editMsgInp');
+        const cancelEdit = typingBody.querySelector('div.cancel-edit');
+        const editBtn = document.getElementById('editBtn');
+
+        const id = () => {
+            return sessionStorage.getItem('toEditId');
         }
 
+        //msg send
         input.addEventListener('keypress', (event) => {
             const to = sessionStorage.getItem('to');
             if(event.key === 'Enter') {
@@ -841,6 +837,49 @@ class ChatPageView {
 
                 input.value = '';
             }
+        });
+
+        //msg edit
+        editBtn.addEventListener('click', (event) => {
+            chatController.editMessage(id(), {text: editInput.value, to: sessionStorage.getItem('to')});
+
+            editInput.value = '';
+            editBtn.style.display = 'none';
+            sendBtn.style.display = '';
+
+            editInput.style.display = 'none';
+            input.style.display = '';
+
+            typingBody.classList.remove('typing-body-edit');
+            cancelEdit.style.display = 'none';
+        });
+
+        editInput.addEventListener('keypress', (event) => {
+            if(event.key === 'Enter') {
+                chatController.editMessage(id(), {text: editInput.value, to: sessionStorage.getItem('to')});
+
+                editInput.value = '';
+                editBtn.style.display = 'none';
+                sendBtn.style.display = '';
+    
+                editInput.style.display = 'none';
+                input.style.display = '';
+    
+                typingBody.classList.remove('typing-body-edit');
+                cancelEdit.style.display = 'none';
+            }
+        });
+
+        cancelEdit.addEventListener('click', (event) => {
+            editInput.value = '';
+            editBtn.style.display = 'none';
+            sendBtn.style.display = '';
+    
+            editInput.style.display = 'none';
+            input.style.display = '';
+    
+            typingBody.classList.remove('typing-body-edit');
+            cancelEdit.style.display = 'none';
         });
     }
 }
@@ -914,12 +953,36 @@ class LoginPageView {
                 submit.disabled = true;
             }
         });
+        // LOGIN
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            try {
+                const response = await chatApiService.signIn(login.value, pass.value);
+                const status = await response.status;
+                if (status === 200) {
+                    const data = await response.json();
+                    const token = data.token;
 
-        form.addEventListener('submit', (event) => {
-            if(!chatController.signIn(login.value)) {
-                event.preventDefault();
-                errText.innerText = 'Wrong login or password';
+                    localStorage.setItem('curentUser', login.value);
+                    localStorage.setItem('token', token);
+
+                    chatController.clearPage();
+                    chatController.start();
+                } else if(status === 401) {
+                    login.focus();
+
+                    login.classList.remove('form-input-success');
+                    login.classList.add('form-input-wrong');
+
+                    pass.classList.remove('form-input-success');
+                    pass.classList.add('form-input-wrong');
+                } else {
+                    errText.innerText = 'Wrong login or password';
+                } 
+            } catch (err) {
+                console.error("Error: ", err);
             }
+            
         });
     }
 }
@@ -1015,12 +1078,29 @@ class RegistrPageView {
                 submit.disabled = true;
             }
         });
+        // REGISTER
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const status = await chatApiService.signUp(login.value, pass.value);
 
-        form.addEventListener('submit', (event) => {
-            if(!chatController.signUp(login.value)) {
+            if (await status.status === 409) {
+                errText.innerText = 'User with such login already exists, \n try to sing in.';
+            } else if (await status.status === 200) {
+                const response = await chatApiService.signIn(login.value, pass.value);
+                const data = await response.json();
+                const token = await data.token;
+
+                localStorage.setItem('curentUser', login.value);
+                localStorage.setItem('token', token);
+
+                chatController.clearPage();
+                chatController.start();
+            }
+
+            /* if (!status) {
                 event.preventDefault();
                 errText.innerText = 'User with such login already exists';
-            }
+            } */
         });
     }
 }
@@ -1041,7 +1121,8 @@ class ChatController {
         //* Message List n UserList
         this.msgList = new MessageList(messages);
 
-        this.userList = new UserList(['Dima', 'ZhenyaZh', 'ZhenyaH', 'Sasha', 'Pasha'], ['Dima', 'ZhenyaZh']);
+        /* this.userList = chatApiService.getUsers(); */
+        this.userList = new UserList([],[]);
 
         //* View
         this.headerView = new HeaderView('curentUser');
@@ -1053,6 +1134,7 @@ class ChatController {
         this.chatPageView = new ChatPageView();
         this.loginPageView = new LoginPageView();
         this.registrPageView = new RegistrPageView();
+        this.errorPageView = new ErrorPageView();
     }
 
     signIn(login) {
@@ -1070,14 +1152,33 @@ class ChatController {
         return false;
     }
     
-    signUp(login) {
-        if(!!this.userList) {
+    signUp(login, pass) {
+        console.log('Try to register...');
+
+        (async () => {
+            console.log(await chatApiService.signUp(login, pass));
+            return status.status;
+        })()
+        /* try {
+            console.log('Try to register...');
+            const response = await chatApiService.signUp(login, pass);
+            debugger;
+            console.log(response.status);
+
+            setTimeout(() => console.log('TimeOut'), 5000); 
+        } catch(err) {
+            console.error("Error: ", err);
+        } */
+        
+
+        //const result = await chatApiService.signUp(login, pass);
+
+        /* if(!!this.userList) {
             for(let user of this.userList.users) {
                 if(user === login) {
                     return false;
                 }
             } 
-            debugger;
     
             this.userList.users.push(login);
             localStorage.setItem('userList', JSON.stringify(this.userList));
@@ -1087,7 +1188,7 @@ class ChatController {
             this.chatPageView.display();
     
             return true;
-        }
+        } */
     }
 
     setCurrentUser(user) {
@@ -1100,48 +1201,279 @@ class ChatController {
         this.showMessage();
     }
     
-    addMessage(msg) {
-        if(!this.msgList.user) {
-            console.warn('User is not authorized');
-        }
-    
+    async addMessage(msg) {
         const {text, to} = msg;
-        this.msgList.add(text, to);
-        this.showMessage();
+        
+        try {
+            const response = await chatApiService.postMessage(text, to);
+            this.showMessage();
+        } catch(err) {
+            console.error("Error: ", err);
+        }
+        
     }
     
-    editMessage(idF, msg) {
-        if(this.msgList.edit(idF, msg)) {
+    async editMessage(idF, msg) {
+        const {text, to} = msg;
+        try {
+            const response = await chatApiService.putMessage(idF, text, to);
             this.showMessage();
+        } catch(err) {
+            console.error("Error: ", err);
         }
     }
     
-    removeMessage(idF) {
-        this.msgList.remove(idF);
-        this.messageView.display(this.msgList.getPage());
+    async removeMessage(idF) {
+        try {
+            const response = await chatApiService.delMessage(idF);
+            this.showMessage();
+        } catch(err) {
+            console.error("Error: ", err);
+        }
     }
     
-    showMessage(skip = 0, top = parseInt(sessionStorage.getItem('top')), filterObj = {}) {
-        this.messageView.display(this.msgList.getPage(skip, top, filterObj));
+    async showMessage() {
+        try {
+            const response = await chatApiService.getMessages();
+            const msgs = await response.json();
+            this.messageView.display(msgs);
+
+        } catch (err) {
+            console.log("Error in showMessage: ", err);
+            this.errorPage();
+        }
     }
-    
+  
     showUsers() {
         this.onlineUsersView.display(this.userList.activeUsers);
         this.offlineUsersView.display(this.userList.getOffline());
     }
 
     clearPage() {
+        clearInterval(window.msgInterval);                
+        clearInterval(window.usersInterval);                
+
         const body = document.querySelector('body');
         body.removeChild(document.querySelector('div.wrapper'));
     }
 
-    start() {
+    async start() {
+        this.chatPageView.display();
+
         sessionStorage.setItem('skip', 0);
         sessionStorage.setItem('top', 10);
+
+        sessionStorage.setItem('searchMsg', '');
+        sessionStorage.setItem('searchUser', '');
+        sessionStorage.setItem('searchDate', '');
         
-        this.chatPageView.display();
+        try {
+
+            //Curent user
+            this.headerView.display();
+
+            //Messages
+            this.showMessage();
+            window.msgInterval = setInterval(() => {
+                this.showMessage();
+            }, 10 * 1000);
+
+            //USERS
+            const localLoadUsers = async () => {
+                try {
+                    this.userList = await chatApiService.getUsers();
+                    this.showUsers();
+                } catch(err) {
+                    console.error("Load users ERROR: ", err);
+                    this.errorPage();
+                }
+            }
+
+            localLoadUsers();
+            window.usersInterval = setInterval(() => {
+                localLoadUsers();
+            }, 40 * 1000);
+        } catch(e) {
+            console.error("Error :", e);
+            this.errorPage();
+        }
+        
+    }
+
+    errorPage() {
+        this.clearPage();
+        this.errorPageView.display();
     }
 }
 
+class ChatApiService {
+    constructor(host) {
+        this._host = host;
+    }
+
+    _getHeaders() {
+        const myHeaders = new Headers();
+        const data = 'Bearer ' + localStorage.getItem('token') || '';
+        myHeaders.append("Authorization", data);
+
+        return myHeaders;
+    }
+    //Users
+    getUsers() {
+        const link = this._host + 'users';
+
+        const newUserList = [];
+        const newActiveList = [];
+
+        var myHeaders = this._getHeaders();
+
+        var requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
+
+        return fetch(link, requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                for (const user of result) {
+                    if(!!user.name) {
+                        newUserList.push(user.name);
+                        if (user.isActive) {
+                            newActiveList.push(user.name);
+                        }
+                    }
+                }
+                return new UserList(newUserList, newActiveList);
+            })
+            .catch(error => console.log('Error', error));
+    }
+
+    //Accaunt
+    async logOut() {
+        const link = this._host + 'auth/logout'
+        var myHeaders = this._getHeaders();
+
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
+
+        return fetch(link, requestOptions);
+        /* return fetch(link, requestOptions); */
+    }
+
+    async signIn(name, pass) {
+        const link = this._host + 'auth/login';
+
+        var formdata = new FormData();
+        formdata.append("name", `${name}`);
+        formdata.append("pass", `${pass}`);
+
+        var requestOptions = {
+            method: 'POST',
+            body: formdata,
+            redirect: 'follow'
+        };
+        
+        try {
+            return await fetch(link, requestOptions);
+        } catch (err) {
+            console.error("Error: ", err);
+        }
+        
+    }
+
+    async signUp(name, pass) {
+        const link = this._host + 'auth/register';
+        var formdata = new FormData();
+        formdata.append("name", `${name}`);
+        formdata.append("pass", `${pass}`);     
+
+        var requestOptions = {
+            method: 'POST',
+            body: formdata,
+            redirect: 'follow'
+        };
+
+        return await fetch(link, requestOptions);
+    }
+
+    //Messages
+    async getMessages() {
+        let link = `${this._host}messages?skip=${sessionStorage.getItem('skip')}&top=${sessionStorage.getItem('top')}`;
+        link += `&author=${sessionStorage.getItem('searchUser')}&text=${sessionStorage.getItem('searchMsg')}&dateTo=${sessionStorage.getItem('searchDate').split('-').join()}`;
+        var myHeaders = this._getHeaders();
+
+        var requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
+
+        try {
+            return await fetch(link, requestOptions)
+        } catch(err) {
+            console.error("Error in GET messages: ", err);
+        }
+        
+    }
+
+    async postMessage(text, to) {
+        var myHeaders = this._getHeaders();
+        myHeaders.append("Content-Type", "application/json");
+
+        var raw = JSON.stringify({"text":text,"isPersonal":to ? true : false, "to": to ? to : '',"author":localStorage.getItem('curentUser')});
+
+        var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+        };
+
+        return fetch("https://jslabdb.datamola.com/messages", requestOptions)
+        .then(response => response.text())
+        .then(result => console.log(result))
+        .catch(error => console.log('error', error));
+    }
+
+    async delMessage(id) {
+        const link = this._host + "messages/" + id;
+        var myHeaders = this._getHeaders();
+
+        var requestOptions = {
+            method: 'DELETE',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
+
+        fetch(link, requestOptions)
+        .then(response => response.text())
+        .then(result => console.log(result))
+        .catch(error => console.log('error', error));
+    }
+
+    async putMessage(id, text, to = '') {
+        const link = this._host + 'messages/' + id;
+        
+        var myHeaders = this._getHeaders();
+        myHeaders.append("Content-Type", "application/json");
+
+        var raw = JSON.stringify({"text":text,"isPersonal":to ? true : false, "to":to ? to : ''});
+
+        var requestOptions = {
+            method: 'PUT',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+
+        return await fetch(link, requestOptions);
+    }
+}
+
+const chatApiService = new ChatApiService("https://jslabdb.datamola.com/");
 const chatController = new ChatController();
 chatController.start();

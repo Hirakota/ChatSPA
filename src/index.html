@@ -194,7 +194,9 @@
                                 <section class="message-list" id="messageList">
                                                                
                                 </section>
-                                <div class="typing">
+
+
+                                <template id='typing-template'>
                                     <div class="typing-body">
                                         <input
                                             type="text"
@@ -231,6 +233,8 @@
                                             ></span>
                                         </button>
                                     </div>
+                                </template>
+                                <div class="typing">
                                 </div>
                             </section>
                         </div>
@@ -241,9 +245,9 @@
                         <div class="space"></div>
                         <div class="footer-body">
                             <span>Author: Sary Alexandr</span>
-                            <span>Version: beta-0.3</span>
-                            <span>Date: 25.11.2020</span>
-                            <span>Special for DataMola JS Camping</span>
+                            <span>Version: relesase-1.0</span>
+                            <span>Date: 08.12.2020</span>
+                            <span>Specially for DataMola JS Camping</span>
                         </div>
                     </div>
                 </footer>
@@ -285,9 +289,9 @@
                         <div class="space"></div>
                         <div class="footer-body">
                             <span>Author: Sary Alexandr</span>
-                            <span>Version: beta-0.3</span>
-                            <span>Date: 24.10.2020</span>
-                            <span>Special for DataMola JS Camping</span>
+                            <span>Version: relesase-1.0</span>
+                            <span>Date: 08.12.2020</span>
+                            <span>Specially for DataMola JS Camping</span>
                         </div>
                     </div>
                 </footer>
@@ -332,13 +336,34 @@
                         <div class="space"></div>
                         <div class="footer-body">
                             <span>Author: Sary Alexandr</span>
-                            <span>Version: beta-0.3</span>
-                            <span>Date: 24.10.2020</span>
-                            <span>Special for DataMola JS Camping</span>
+                            <span>Version: relesase-1.0</span>
+                            <span>Date: 08.12.2020</span>
+                            <span>Specially for DataMola JS Camping</span>
                         </div>
                     </div>
                 </footer>
             </div>
+        </template>
+        <template id="error-page">
+            <div class="wrapper">
+                <div style="display: none;"></div>
+                <div>
+                    <div class="error-wrapper">
+                        <div class="error-body">
+                            <span class="iconify error-icon" data-inline="false" data-icon="whh:emojisorry"></span>
+                            <div class="error-info">
+                                <h1>Oops</h1>
+                                <p>
+                                    We can't seem to find the page you're looking for.
+                                </p>
+                            </div>
+                        </div>
+                        <button class="error-btn" id="errBtn">
+                            Back to chat
+                        </button>
+                    </div>
+                </div>
+            </div>    
         </template>
     </body>
     <script src="script.js"></script>
