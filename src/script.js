@@ -1285,6 +1285,7 @@ class ChatController {
                     this.showUsers();
                 } catch(err) {
                     console.error("Load users ERROR: ", err);
+                    this.errorPage();
                 }
             }
 
